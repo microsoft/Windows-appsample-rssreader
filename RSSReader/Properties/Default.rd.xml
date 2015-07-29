@@ -5,11 +5,11 @@
 
     Runtime Directives are documented at http://go.microsoft.com/fwlink/?LinkID=391919
 
-    To fully enable reflection for App1.MyClass and all of its public/private members
-    <Type Name="App1.MyClass" Dynamic="Required All"/>
+    To fully enable reflection for RSSReader.MyClass and all of its public/private members
+    <Type Name="RSSReader.MyClass" Dynamic="Required All"/>
 
     To enable dynamic creation of the specific instantiation of AppClass<T> over System.Int32
-    <TypeInstantiation Name="App1.AppClass" Arguments="System.Int32" Activate="Required Public" />
+    <TypeInstantiation Name="RSSReader.AppClass" Arguments="System.Int32" Activate="Required Public" />
 
     Using the Namespace directive to apply reflection policy to all the types in a particular namespace
     <Namespace Name="DataClasses.ViewModels" Seralize="All" />
@@ -28,9 +28,4 @@
 
 
   </Application>
-
-  <!-- Enable dynamic access to types that Application Insights requires -->
-  <Library Name="*Microsoft.ApplicationInsights*">
-    <Type Name="Windows.ApplicationModel.Core.CoreApplication" Dynamic="Required Public" />
-  </Library>
 </Directives>

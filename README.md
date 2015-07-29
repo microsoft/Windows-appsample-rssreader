@@ -15,14 +15,21 @@ RSSReader demonstrates:
 * The XAML SplitView control along with AdaptiveTriggers to create an app that works well for multiple screen sizes.
 * C# and XAML using the MVVM design pattern.
 
+## Universal Windows Platform development
+
+This sample requires Visual Studio 2015 and the Windows Software Development Kit (SDK) for Windows 10. 
+
+[Get a free copy of Visual Studio 2015 Community Edition with support for building Universal Windows apps](http://go.microsoft.com/fwlink/?LinkID=280676)
+
+Additionally, to be informed of the latest updates to Windows and the development tools, join the [Windows Insider Program](https://insider.windows.com/ "Become a Windows Insider").
+
 ## Running the sample
 
 The default project is RSSReader and you can Start Debugging (F5) or Start Without Debugging (Ctrl+F5) to try it out. The app will run in the emulator or on physical devices. 
 
-**Note:** This sample assumes you have an internet connection. It also requires Visual Studio 2015 RC and the associated Windows 10 developer tools. The platform target currently defaults to ARM, so be sure to change that to x64 or x86 if you want to test on a non-ARM device. 
+**Note:** This sample assumes you have an internet connection. Also, the platform target currently defaults to ARM, so be sure to change that to x64 or x86 if you want to test on a non-ARM device. 
 
 ## Code at a glance
-
 If you’re just interested in code snippets for certain API and don’t want to browse or run the full sample, check out the following files for examples of some highlighted features:
 
 * ViewModel/FeedsArticlesViewModel.cs:
