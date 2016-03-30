@@ -1,0 +1,34 @@
+﻿<ArrayOfArrayOfstring xmlns="http://schemas.microsoft.com/2003/10/Serialization/Arrays" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+    <ArrayOfstring>
+        <string>Building Apps for Windows</string>
+        <string>http://blogs.windows.com/buildingapps/feed</string>
+    </ArrayOfstring>
+    <ArrayOfstring>
+        <string>Windows Blog</string>
+        <string>http://blogs.windows.com/feed</string>
+    </ArrayOfstring>
+    <ArrayOfstring>
+        <string>Build 2016</string>
+        <string>https://blogs.windows.com/blog/tag/build-2016/feed</string>
+    </ArrayOfstring>
+    <ArrayOfstring>
+        <string>The Fire Hose</string>
+        <string>http://blogs.microsoft.com/firehose/feed</string>
+    </ArrayOfstring>
+    <ArrayOfstring>
+        <string>Official Microsoft Blog</string>
+        <string>http://blogs.microsoft.com/feed</string>
+    </ArrayOfstring>
+    <ArrayOfstring>
+        <string>Microsoft on the Issues</string>
+        <string>http://blogs.microsoft.com/on-the-issues/feed</string>
+    </ArrayOfstring>
+    <ArrayOfstring>
+        <string>Next at Microsoft</string>
+        <string>http://blogs.microsoft.com/next/feed</string>
+    </ArrayOfstring>
+    <ArrayOfstring>
+        <string>Internet of Things</string>
+        <string>http://blogs.microsoft.com/iot/feed</string>
+    </ArrayOfstring>
+</ArrayOfArrayOfstring>
