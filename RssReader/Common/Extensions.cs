@@ -22,42 +22,41 @@
 //  THE SOFTWARE.
 //  ---------------------------------------------------------------------------------
 
-using Windows.Foundation;
-using Windows.UI.Xaml;
+using System;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using Windows.System;
 using Windows.UI.Xaml.Controls;
 
-namespace RssReader.Controls
+namespace RssReader.Common
 {
-    public sealed partial class PageHeader : UserControl
+    public static class Extensions
     {
-        private static readonly double DEFAULT_LEFT_MARGIN = 24;
+        /// <summary>
+        /// Removes regular-expression pattern matches from the 
+        /// string and returns the result as a new string.
+        /// </summary>
+        public static String RegexRemove(this string input, string pattern) => 
+            Regex.Replace(input, pattern, string.Empty);
 
-        public PageHeader()
+        /// <summary>
+        /// Gets the string representation of a URI without the scheme.
+        /// </summary>
+        public static string WithoutScheme(this Uri uri) => 
+            uri.ToString().Substring(uri.Scheme.Length);
+
+        /// <summary>
+        /// Compares the URI to the attempted WebView navigation URI.
+        /// If they are different, cancels the WebView navigation, opens the URI 
+        /// in the browser, and returns true; otherwise, returns false.
+        /// </summary>
+        public static async Task<bool> LaunchBrowserForNonMatchingUriAsync(
+            this Uri uriToMatch, WebViewNavigationStartingEventArgs e)
         {
-            this.InitializeComponent();
-
-            this.Loaded += (s, a) =>
-            {
-                AppShell.Current.TogglePaneButtonRectChanged += Current_TogglePaneButtonSizeChanged;
-                double leftMargin = AppShell.Current.TogglePaneButtonRect.Right;
-                leftMargin = leftMargin > 0 ? leftMargin : DEFAULT_LEFT_MARGIN;
-                TitleBar.Margin = new Thickness(leftMargin, 0, 0, 0);
-            };
+            if (e.Uri.WithoutScheme() == uriToMatch.WithoutScheme()) return false;
+            e.Cancel = true;
+            await Launcher.LaunchUriAsync(e.Uri);
+            return true;
         }
-
-        private void Current_TogglePaneButtonSizeChanged(AppShell sender, Rect e)
-        {
-            // If there is no adjustment due to the toggle button, use the default left margin. 
-            TitleBar.Margin = new Thickness(e.Right == 0 ? DEFAULT_LEFT_MARGIN : e.Right, 0, 0, 0);
-        }
-
-        public UIElement HeaderContent
-        {
-            get { return (UIElement)GetValue(HeaderContentProperty); }
-            set { SetValue(HeaderContentProperty, value); }
-        }
-
-        public static readonly DependencyProperty HeaderContentProperty =
-            DependencyProperty.Register("HeaderContent", typeof(UIElement), typeof(PageHeader), new PropertyMetadata(DependencyProperty.UnsetValue));
     }
 }

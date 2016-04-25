@@ -51,9 +51,9 @@ namespace RssReader.Views
 
         private void ArticlesListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            // Ensures that PropertyChanged will be raised even if the clicked article is already current.
-            // This ensures that clicking an article in master-only view will always navigate to details-only view. 
-            if (ViewModel.CurrentArticle == e.ClickedItem as ArticleViewModel)
+            // Raise PropertyChanged even if the clicked article is already current. This ensures 
+            // that clicking an article in master-only view will always navigate to details-only view. 
+            if (ViewModel.CurrentArticle.Equals(e.ClickedItem as ArticleViewModel))
             {
                 ViewModel.OnPropertyChanged(nameof(ViewModel.CurrentArticle));
             }

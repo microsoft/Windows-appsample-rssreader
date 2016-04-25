@@ -27,7 +27,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.UI.Xaml.Controls;
@@ -78,11 +77,6 @@ namespace RssReader.ViewModels
         }
 
         /// <summary>
-        /// Removes regular-expression pattern matches from the string and returns the result as a new string.
-        /// </summary>
-        private static String RegexRemove(this string input, string pattern) => Regex.Replace(input, pattern, string.Empty);
-
-        /// <summary>
         /// Retrieves feed data from the server and updates the appropriate FeedViewModel properties.
         /// </summary>
         public static async Task RefreshAsync(this FeedViewModel feedViewModel)
@@ -95,35 +89,53 @@ namespace RssReader.ViewModels
             feedViewModel.IsLoading = true;
             feedViewModel.Symbol = Symbol.PostUpdate;
 
-            try
-            {
-                var feed = await new SyndicationClient().RetrieveFeedAsync(feedViewModel.Link);
-
-                feedViewModel.Name = String.IsNullOrEmpty(feedViewModel.Name) ? feed.Title.Text : feedViewModel.Name;
-                feedViewModel.Description = feed.Subtitle?.Text ?? String.Empty;
-
-                feed.Items.Select(item => new ArticleViewModel
+            Func<Task<bool>> tryGetFeed = async () =>
+            { 
+                try
                 {
-                    Title = item.Title.Text,
-                    Summary = item.Summary == null ? string.Empty : 
-                        item.Summary.Text.RegexRemove("\\&.{0,4}\\;").RegexRemove("<.*?>"),
-                    Author = item.Authors.Select(a => a.NodeValue).FirstOrDefault(),
-                    Link = item.ItemUri ?? item.Links.Select(l => l.Uri).FirstOrDefault(),
-                    PublishedDate = item.PublishedDate
-                })
-                .ToList().ForEach(article => 
+                    var feed = await new SyndicationClient().RetrieveFeedAsync(feedViewModel.Link);
+
+                    feedViewModel.Name = String.IsNullOrEmpty(feedViewModel.Name) ? feed.Title.Text : feedViewModel.Name;
+                    feedViewModel.Description = feed.Subtitle?.Text ?? String.Empty;
+
+                    feed.Items.Select(item => new ArticleViewModel
+                    {
+                        Title = item.Title.Text,
+                        Summary = item.Summary == null ? string.Empty :
+                            item.Summary.Text.RegexRemove("\\&.{0,4}\\;").RegexRemove("<.*?>"),
+                        Author = item.Authors.Select(a => a.NodeValue).FirstOrDefault(),
+                        Link = item.ItemUri ?? item.Links.Select(l => l.Uri).FirstOrDefault(),
+                        PublishedDate = item.PublishedDate
+                    })
+                    .ToList().ForEach(article =>
+                    {
+                        var favorites = AppShell.Current.ViewModel.FavoritesFeed;
+                        var existingCopy = favorites.Articles.FirstOrDefault(a => a.Equals(article));
+                        article = existingCopy ?? article;
+                        if (!feedViewModel.Articles.Contains(article)) feedViewModel.Articles.Add(article);
+                    });
+                    return true;
+                }
+                catch (Exception)
                 {
-                    var favorites = AppShell.Current.ViewModel.FavoritesFeed;
-                    var existingCopy = favorites.Articles.FirstOrDefault(a => a.Equals(article));
-                    article = existingCopy ?? article;
-                    if (!feedViewModel.Articles.Contains(article)) feedViewModel.Articles.Add(article);
-                });
-            }
-            catch (Exception)
-            {
-                feedViewModel.IsInError = true;
-                feedViewModel.ErrorMessage = "Hmm... Are you sure this is an RSS URL?";
-            }
+                    if (feedViewModel.Articles.Count == 0)
+                    {
+                        feedViewModel.IsInError = true;
+                        feedViewModel.ErrorMessage = "Hmm... Are you sure this is an RSS URL?";
+                    }
+                    else
+                    {
+                        // TODO display error state that doesn't replace articles that have already been retrieved.
+                    }
+                    return false;
+                }
+            };
+
+            int numberOfAttempts = 5;
+            bool success = false;
+            do { success = await tryGetFeed(); }
+            while (!success && numberOfAttempts-- > 0);
+
             feedViewModel.IsLoading = false;
         }
 

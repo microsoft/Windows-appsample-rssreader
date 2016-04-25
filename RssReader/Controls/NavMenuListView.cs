@@ -61,12 +61,12 @@ namespace RssReader.Controls
             this.Loaded += (s, a) =>
             {
                 var parent = VisualTreeHelper.GetParent(this);
-                while (parent != null && !(parent is SplitView))
+                while (parent != null && !(parent is Page) && !(parent is SplitView))
                 {
                     parent = VisualTreeHelper.GetParent(parent);
                 }
 
-                if (parent != null)
+                if (parent != null && parent is SplitView)
                 {
                     this.splitViewHost = parent as SplitView;
 
@@ -227,6 +227,11 @@ namespace RssReader.Controls
                 {
                     control.Focus(FocusState.Programmatic);
                 }
+                if (control is ListViewItem)
+                {
+                    var item = control as ListViewItem;
+                    ScrollIntoView(item.Content);
+                }
             }
         }
 
@@ -240,12 +245,13 @@ namespace RssReader.Controls
         private void InvokeItem(object focusedItem)
         {
             this.SetSelectedItem(focusedItem as ListViewItem);
-            this.ItemInvoked(this, focusedItem as ListViewItem);
+            this.ItemInvoked?.Invoke(this, focusedItem as ListViewItem);
 
-            if (this.splitViewHost.IsPaneOpen)
+            if (this.splitViewHost == null || this.splitViewHost.IsPaneOpen)
             {
-                if (this.splitViewHost.DisplayMode == SplitViewDisplayMode.CompactOverlay ||
-                    this.splitViewHost.DisplayMode == SplitViewDisplayMode.Overlay)
+                if (this.splitViewHost != null && 
+                    (this.splitViewHost.DisplayMode == SplitViewDisplayMode.CompactOverlay ||
+                    this.splitViewHost.DisplayMode == SplitViewDisplayMode.Overlay))
                 {
                     this.splitViewHost.IsPaneOpen = false;
                 }

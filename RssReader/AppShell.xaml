@@ -116,7 +116,6 @@
                     <VisualState.Setters>
                         <Setter Target="RootSplitView.DisplayMode" Value="CompactInline" />
                         <Setter Target="RootSplitView.IsPaneOpen" Value="True" />
-                        <Setter Target="NavPaneDivider.Visibility" Value="Visible" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState>
@@ -126,7 +125,6 @@
                     <VisualState.Setters>
                         <Setter Target="RootSplitView.DisplayMode" Value="CompactOverlay" />
                         <Setter Target="RootSplitView.IsPaneOpen" Value="False" />
-                        <Setter Target="NavPaneDivider.Visibility" Value="Collapsed" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState>
@@ -148,8 +146,10 @@
                     <Grid.RowDefinitions>
                         <RowDefinition />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <!-- A custom ListView to display the items in the pane.  The automation Name is set in the ContainerContentChanging event. -->
+                    <!-- A custom ListView to display the items in the pane.  
+                        The automation Name is set in the ContainerContentChanging event. -->
                     <controls:NavMenuListView x:Name="FeedsList"
                         Margin="0,48,0,0"
                         ItemsSource="{x:Bind ViewModel.Feeds, Mode=OneWay}" TabIndex="3"
@@ -157,27 +157,18 @@
                         SelectionChanged="FeedsList_SelectionChanged"
                         ItemInvoked="FeedsList_ItemInvoked"
                         ItemContainerStyle="{StaticResource NavMenuItemContainerStyle}"
-                        ItemTemplate="{StaticResource FeedsListItemTemplate}">
-                        <controls:NavMenuListView.Footer>
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <Rectangle x:Name="NavPaneDivider" 
-                                           Margin="0" Width="280" Height="1" HorizontalAlignment="Stretch" 
-                                           Fill="{ThemeResource Border100PaleRoseBrush}"/>
-                                <controls:NavMenuListView x:Name="NavMenuList"
-                                    Grid.Row="1"
-                                    Margin="0"
-                                    ItemsSource="{x:Bind NavList}" TabIndex="4"
-                                    ContainerContentChanging="NavMenuItemContainerContentChanging"
-                                    ItemInvoked="NavMenuList_ItemInvoked" 
-                                    ItemContainerStyle="{StaticResource NavMenuItemContainerStyle}"
-                                    ItemTemplate="{StaticResource NavMenuItemTemplate}"/>
-                            </Grid>
-                        </controls:NavMenuListView.Footer>
-                    </controls:NavMenuListView>
+                        ItemTemplate="{StaticResource FeedsListItemTemplate}"/>
+                    <Rectangle x:Name="NavPaneDivider" Grid.Row="1"
+                        Margin="0" Width="280" Height="1" HorizontalAlignment="Stretch" 
+                        Fill="{ThemeResource Border100PaleRoseBrush}"/>
+                    <controls:NavMenuListView x:Name="NavMenuList"
+                        Grid.Row="2" 
+                        Margin="0"
+                        ItemsSource="{x:Bind NavList}" TabIndex="4"
+                        ContainerContentChanging="NavMenuItemContainerContentChanging"
+                        ItemInvoked="NavMenuList_ItemInvoked" 
+                        ItemContainerStyle="{StaticResource NavMenuItemContainerStyle}"
+                        ItemTemplate="{StaticResource NavMenuItemTemplate}"/>
                 </Grid>
             </SplitView.Pane>
             <SplitView.Content>
@@ -202,7 +193,7 @@
 
         <!-- Declared last to have it rendered above everything else, but it needs to be the first item in the tab sequence. -->
         <ToggleButton x:Name="TogglePaneButton"
-            Visibility="{x:Bind ViewModel.IsHamburgerMenuVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+            Visibility="{x:Bind ViewModel.IsInDetailsMode, Mode=OneWay, ConverterParameter=Reverse, Converter={StaticResource BooleanToVisibilityConverter}}"
             Margin="0"
             TabIndex="1" 
             Checked="{x:Bind CheckTogglePaneButtonSizeChanged}"

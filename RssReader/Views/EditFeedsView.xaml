@@ -58,11 +58,11 @@
         <!--No-feeds-to-edit content-->
         <Grid Visibility="{x:Bind ViewModel.HasNoFeeds, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
             <Grid.RowDefinitions>
-                    <RowDefinition Height="96" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
+                <RowDefinition Height="96" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <!--Instruction content-->
                 <Grid Background="{ThemeResource Background100PastelLemonBrush}" HorizontalAlignment="Stretch">
@@ -129,9 +129,8 @@
                    Foreground="{ThemeResource Foreground100DimGrayBrush}"
                    Style="{StaticResource CaptionTextBlockStyle}"/>
 
-            <ScrollViewer Grid.Row="3" Style="{ThemeResource ScrollViewerStyle1}">
-                <ListView x:Name="EditFeedsList"
-                   Margin="24,12"
+            <ListView x:Name="EditFeedsList" Grid.Row="3" 
+                   Margin="24,12,0,0"
                    IsMultiSelectCheckBoxEnabled="True"
                    SelectionMode="Multiple"
                    CanReorderItems="True"
@@ -141,7 +140,6 @@
                    ItemTemplate="{StaticResource EditFeedsListItemTemplate}"
                    ItemContainerStyle="{StaticResource ListViewItemEditFeed}"
                    SelectionChanged="{x:Bind SelectionChanged}" />
-            </ScrollViewer>
             
             <CommandBar Grid.Row="4">
                 <AppBarButton Icon="Add"

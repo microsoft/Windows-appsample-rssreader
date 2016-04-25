@@ -37,11 +37,6 @@ We implemented the navigation and layout patterns in this sample using code from
 [Windows-universal-samples](https://github.com/Microsoft/Windows-universal-samples) repo. These samples represent the current
 minimum recommendations for these patterns, and the RssReader sample will continue to reflect this guidance in future updates. 
 
-**Note:** This UI redesign is a work in progress. The goal for the current release is to provide a working baseline of the 
-UI features listed above. There are a few known issues with window-size adaptivity that we will fix soon. 
-Other updates in planning for the near future include refactoring the implementation to increase 
-the use of adaptive triggers, visual state manager, relative layout panels, and other XAML recommendations. 
-
 Please report any bugs or suggestions on the [Issues](https://github.com/Microsoft/Windows-appsample-rssreader/issues) list. 
 All feedback is welcome!
 

@@ -63,6 +63,8 @@ namespace RssReader.ViewModels
                     }
                     else
                     {
+                        // If the articles have not yet been loaded, wait until 
+                        // they are loaded before selecting the first one. 
                         NotifyCollectionChangedEventHandler handler = null;
                         handler = (s, e) =>
                         {
@@ -83,25 +85,45 @@ namespace RssReader.ViewModels
             set { if (value != null) CurrentFeed = value as FeedViewModel; }
         }
 
+        private bool suppressDuplicatePropertyChanged = false;
         private ArticleViewModel _currentArticle;
         public ArticleViewModel CurrentArticle
         {
             get { return _currentArticle; }
-            set { if (SetProperty(ref _currentArticle, value)) OnPropertyChanged(nameof(CurrentArticleAsObject)); }
+            set
+            {
+                if (!SetProperty(ref _currentArticle, value) && !suppressDuplicatePropertyChanged)
+                {
+                    // SetProperty raises PropertyChanged only if the backing field is actually updated.
+                    // Here we raise PropertyChanged even if it the property value doesn't actually change,
+                    // (but only if the update is not coming from the UI via the CurrentArticleAsObject property
+                    // binding). This ensures that the first article will be selected when changing feeds, 
+                    // even if the new feed has the same first article as the last one. 
+                    OnPropertyChanged();
+                }
+                if (!suppressDuplicatePropertyChanged) OnPropertyChanged(nameof(CurrentArticleAsObject));
+                suppressDuplicatePropertyChanged = false;
+            }
         }
         public object CurrentArticleAsObject
         {
             get { return CurrentArticle as object; }
-            set { if (value != null) CurrentArticle = value as ArticleViewModel; }
+            set
+            {
+                if (value != null)
+                {
+                    suppressDuplicatePropertyChanged = true;
+                    CurrentArticle = value as ArticleViewModel;
+                }
+            }
         }
 
-        private bool _isHamburgerMenuVisible = true;
-        public bool IsHamburgerMenuVisible
+        private bool _isInDetailsMode = false;
+        public bool IsInDetailsMode
         {
-            get { return _isHamburgerMenuVisible; }
-            set { if (SetProperty(ref _isHamburgerMenuVisible, value)) OnPropertyChanged(nameof(IsHamburgerMenuHidden)); }
+            get { return _isInDetailsMode; }
+            set { SetProperty(ref _isInDetailsMode, value); }
         }
-        public bool IsHamburgerMenuHidden => !IsHamburgerMenuVisible;
 
         private bool _isFeedAddedMessageShowing;
         public bool IsFeedAddedMessageShowing
@@ -143,7 +165,7 @@ namespace RssReader.ViewModels
             Feeds.Clear();
             (await FeedDataSource.GetFeedsAsync()).ForEach(feed => Feeds.Add(feed));
             CurrentFeed = Feeds[Feeds.Count == 1 ? 0 : 1];
-            CurrentArticle = CurrentFeed.Articles.FirstOrDefault() ?? CurrentArticle;
+            //CurrentArticle = CurrentFeed.Articles.FirstOrDefault() ?? CurrentArticle;
             if (FavoritesFeed.Articles.Count == 0) FavoritesFeed.ErrorMessage = NO_ARTICLES_MESSAGE;
             FavoritesFeed.Articles.CollectionChanged += async (s, e) =>
             {

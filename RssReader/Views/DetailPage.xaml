@@ -31,7 +31,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     x:Name="PageRoot"
-    NavigationCacheMode="Required"
+    NavigationCacheMode="Enabled"
     Loaded="PageRoot_Loaded"
     Unloaded="PageRoot_Unloaded"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -42,6 +42,8 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <WebView x:Name="ArticleWebView"/>
-
+    <Grid>
+        <ProgressBar Margin="24,8" IsIndeterminate="True" Style="{ThemeResource ProgressBarStyle1}" />
+        <WebView x:Name="ArticleWebView" Visibility="Collapsed"/>
+    </Grid>
 </Page>

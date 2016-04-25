@@ -85,11 +85,6 @@ namespace RssReader.Views
             };
         }
 
-        private void NameTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
         private void ResetFeed()
         {
             ViewModel.CurrentFeed = new FeedViewModel();

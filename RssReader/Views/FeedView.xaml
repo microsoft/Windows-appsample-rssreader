@@ -188,11 +188,15 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <TextBlock 
-                    Margin="24,12"
-                    Text="{x:Bind ViewModel.CurrentFeed.Name, Mode=OneWay}"
-                    Foreground="{ThemeResource Foreground100CrimsonBrush}"
-                    Style="{ThemeResource SubtitleTextBlockStyle}" />
+                <controls:PageHeader>
+                    <controls:PageHeader.HeaderContent>
+                        <TextBlock Text="{x:Bind ViewModel.CurrentFeed.Name, Mode=OneWay}"
+                               HorizontalAlignment="Left" 
+                               TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"
+                               Foreground="{ThemeResource Foreground100CrimsonBrush}"
+                               Style="{ThemeResource SubtitleTextBlockStyle}"/>
+                    </controls:PageHeader.HeaderContent>
+                </controls:PageHeader>
 
                 <Rectangle 
                     Margin="24,0.333,24,0" Height="1" 
@@ -228,7 +232,7 @@
                        HorizontalAlignment="Stretch" VerticalAlignment="Bottom"
                        Fill="{ThemeResource Border100PaleRoseBrush}" />
 
-            <ListView x:Name="ArticlesListView"
+            <controls:NavMenuListView x:Name="ArticlesListView"
                       Grid.Row="1"
                       Padding="12,0"
                       ItemsSource="{x:Bind ViewModel.CurrentFeed.ArticlesAsObject, Mode=OneWay}"

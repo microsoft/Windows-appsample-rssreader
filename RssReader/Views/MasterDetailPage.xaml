@@ -43,7 +43,7 @@
             <VisualStateGroup x:Name="AdaptiveStates" CurrentStateChanged="AdaptiveStates_CurrentStateChanged">
                 <VisualState x:Name="DefaultState">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="1024" />
+                        <AdaptiveTrigger MinWindowWidth="720" />
                     </VisualState.StateTriggers>
                 </VisualState>
                 <VisualState x:Name="NarrowState">
@@ -59,13 +59,16 @@
         </VisualStateManager.VisualStateGroups>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition x:Name="MasterColumn" Width="400" />
+            <ColumnDefinition x:Name="MasterColumn" Width="360" />
             <ColumnDefinition x:Name="DetailColumn" Width="*" />
         </Grid.ColumnDefinitions>
 
         <Frame x:Name="MasterFrame"/>
 
-        <WebView x:Name="ArticleWebView" Grid.Column="1"/>
+        <ProgressBar x:Name="LoadingProgressBar" Visibility="Collapsed"
+            Grid.Column="1" Margin="24,8" IsIndeterminate="True" Style="{ThemeResource ProgressBarStyle1}" />
+
+        <WebView x:Name="ArticleWebView" Grid.Column="1" Visibility="Collapsed"/>
 
     </Grid>
 </Page>

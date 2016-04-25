@@ -42,11 +42,9 @@ namespace RssReader
     /// </summary>
     public sealed partial class AppShell : Page
     {
-        //private bool isPaddingAdded = false;
-
         public static AppShell Current = null;
-        public MainViewModel ViewModel { get; } = new MainViewModel();
 
+        public MainViewModel ViewModel { get; } = new MainViewModel();
 
         public List<NavMenuItem> NavList { get; } = new List<NavMenuItem>(new[] 
         {
@@ -78,38 +76,16 @@ namespace RssReader
 
             this.Loaded += async (sender, args) =>
             {
-                this.CheckTogglePaneButtonSizeChanged();
                 await ViewModel.InitializeFeedsAsync();
                 FeedsList.SelectedIndex = FeedsList.Items.Count > 1 ? 1 : 0;
 
                 var titleBar = Windows.ApplicationModel.Core.CoreApplication.GetCurrentView().TitleBar;
-                //titleBar.IsVisibleChanged += TitleBar_IsVisibleChanged;
             };
 
             ViewModel.BadFeedRemoved += (s, e) => FeedsList.SelectedItem = ViewModel.CurrentFeed;
-
-            SystemNavigationManager.GetForCurrentView().BackRequested += SystemNavigationManager_BackRequested;
-            //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
         }
 
-        public Frame AppFrame => AppShellFrame; 
-
-        //private void TitleBar_IsVisibleChanged(Windows.ApplicationModel.Core.CoreApplicationViewTitleBar sender, object args)
-        //{
-        //    if (!this.isPaddingAdded && sender.IsVisible)
-        //    {
-        //        //add extra padding between window title bar and app content
-        //        double extraPadding = (Double)App.Current.Resources["DesktopWindowTopPadding"];
-        //        this.isPaddingAdded = true;
-
-        //        Thickness margin = NavMenuList.Margin;
-        //        NavMenuList.Margin = new Thickness(margin.Left, margin.Top + extraPadding, margin.Right, margin.Bottom);
-        //        margin = AppShellFrame.Margin;
-        //        AppShellFrame.Margin = new Thickness(margin.Left, margin.Top + extraPadding, margin.Right, margin.Bottom);
-        //        margin = TogglePaneButton.Margin;
-        //        TogglePaneButton.Margin = new Thickness(margin.Left, margin.Top + extraPadding, margin.Right, margin.Bottom);
-        //    }
-        //}
+        public Frame AppFrame => AppShellFrame;
 
         /// <summary>
         /// Default keyboard focus movement for any unhandled keyboarding

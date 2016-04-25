@@ -22,6 +22,7 @@
 //  THE SOFTWARE.
 //  ---------------------------------------------------------------------------------
 
+using RssReader.Common;
 using RssReader.ViewModels;
 using System;
 using System.Linq;
@@ -35,46 +36,59 @@ namespace RssReader.Views
     public sealed partial class MasterDetailPage : Page
     {
         private MainViewModel ViewModel => AppShell.Current.ViewModel;
+        private bool isCurrentFeedNew = false;
 
         public MasterDetailPage()
         {
             InitializeComponent();
 
-            bool isCurrentFeedNew = false;
-            ViewModel.PropertyChanged += (s, e) =>
-            {
-                // Set a flag so that, in narrow mode, details-only navigation doesn't occur if 
-                // the CurrentArticle is changed solely as a side-effect of changing the CurrentFeed.
-                if (e.PropertyName == nameof(ViewModel.CurrentFeed)) isCurrentFeedNew = true;
-                else if (e.PropertyName == nameof(ViewModel.CurrentArticle))
-                {
-                    if (isCurrentFeedNew)
-                    {
-                        isCurrentFeedNew = false;
-                        if (AdaptiveStates.CurrentState == NarrowState) return;
-                    }
+            ViewModel.PropertyChanged += ViewModel_PropertyChanged; 
 
-                    if (AdaptiveStates.CurrentState == NarrowState && !isCurrentFeedNew)
+            ArticleWebView.NavigationStarting += async (s, e) =>
+            {
+                if (!await ViewModel.CurrentArticle.Link.LaunchBrowserForNonMatchingUriAsync(e))
+                {
+                    // In-app navigation, so hide the WebView control and display the progress 
+                    // animation until the page load is completed.
+                    ArticleWebView.Visibility = Visibility.Collapsed;
+                    LoadingProgressBar.Visibility = Visibility.Visible;
+                }
+            };
+
+            ArticleWebView.LoadCompleted += (s, e) =>
+            {
+                ArticleWebView.Visibility = Visibility.Visible;
+                LoadingProgressBar.Visibility = Visibility.Collapsed;
+            };
+        }
+
+        private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            // Set a flag so that, in narrow mode, details-only navigation doesn't occur if 
+            // the CurrentArticle is changed solely as a side-effect of changing the CurrentFeed.
+            if (e.PropertyName == nameof(ViewModel.CurrentFeed)) isCurrentFeedNew = true;
+            else if (e.PropertyName == nameof(ViewModel.CurrentArticle))
+            {
+                if (ViewModel.CurrentArticle != null)
+                {
+                    ArticleWebView.Navigate(ViewModel.CurrentArticle.Link);
+                }
+                else
+                {
+                    ArticleWebView.NavigateToString(string.Empty);
+                }
+
+                if (AdaptiveStates.CurrentState == NarrowState)
+                {
+                    bool switchToDetailsView = !isCurrentFeedNew;
+                    isCurrentFeedNew = false;
+                    if (switchToDetailsView)
                     {
                         // Use "drill in" transition for navigating from master list to detail view
                         Frame.Navigate(typeof(DetailPage), null, new DrillInNavigationTransitionInfo());
                     }
-                    else
-                    {
-                        if (ViewModel.CurrentArticle != null)
-                        {
-                            ArticleWebView.Navigate(ViewModel.CurrentArticle.Link);
-                        }
-                        else
-                        {
-                            ArticleWebView.NavigateToString(string.Empty);
-                        }
-                        isCurrentFeedNew = false;
-                        // Play a refresh animation when the user switches detail items.
-                        //EnableContentTransitions();
-                    }
                 }
-            };
+            }
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
@@ -95,12 +109,6 @@ namespace RssReader.Views
                     var feed = ViewModel.Feeds.FirstOrDefault(f => f.Link == feedUri);
                     ViewModel.CurrentFeed = feed;
                     await feed.RefreshAsync();
-                    var article = feed.Articles.FirstOrDefault();
-                    if (article != null)
-                    {
-                        ViewModel.CurrentArticle = article;
-                        ArticleWebView.Navigate(article.Link);
-                    }
                 }
             }
             else
@@ -125,7 +133,7 @@ namespace RssReader.Views
         {
             var isNarrow = newState == NarrowState;
 
-            if (isNarrow && oldState == DefaultState)// && _lastCurrentArticle != null)
+            if (isNarrow && oldState == DefaultState)
             {
                 // Resize down to the detail item. Don't play a transition.
                 Frame.Navigate(typeof(DetailPage), null, new SuppressNavigationTransitionInfo());
