@@ -45,10 +45,10 @@ All feedback is welcome!
 If you're just interested in code snippets for certain API and don't want to browse or run the full sample, 
 check out the following files for examples of some highlighted features:
 
-* [FeedView.xaml](Views/FeedView.xaml#L25), [AddFeedView.xaml](Views/AddFeedview.xaml#L25), 
-  [EditFeedsView.xaml](Views/EditFeedsView.xaml#L25), and [Styles.xaml](Styles/Styles.xaml#L25)
+* [FeedView.xaml](RssReader/Views/FeedView.xaml#L25), [AddFeedView.xaml](RssReader/Views/AddFeedView.xaml#L25), 
+  [EditFeedsView.xaml](RssReader/Views/EditFeedsView.xaml#L25), and [Styles.xaml](RssReader/Styles/Styles.xaml#L25)
     - Rich UI experiences and XAML resources for colors, templates, and animated effects. 
-* [AppShell.xaml](AppShell.xaml#L25) and [AppShell.xaml.cs](AppShell.xaml.cs#L25)
+* [AppShell.xaml](RssReader/AppShell.xaml#L25) and [AppShell.xaml.cs](RssReader/AppShell.xaml.cs#L25)
     - Use of the [SplitView](https://msdn.microsoft.com/library/windows/apps/windows.ui.xaml.controls.splitview.aspx) control 
       to implement a navigation menu with a hamburger button. 
     - Use of [AdaptiveTrigger](https://msdn.microsoft.com/library/windows/apps/windows.ui.xaml.adaptivetrigger.aspx) with
@@ -57,12 +57,12 @@ check out the following files for examples of some highlighted features:
       to adjust the navigation menu depending on the current window width. 
     - Code that adjusts header margins depending on the state of the navigation menu and hamburger button. 
     - Keyboard support and Frame navigation.
-* [MasterDetailPage.xaml](Views/MasterDetailPage.xaml#L25), [MasterDetailPage.xaml.cs](Views/MasterDetailPage.xaml.cs#L25),
-  [DetailPage.xaml](Views/DetailPage.xaml#L25) and [DetailPage.xaml.cs](Views/DetailPage.xaml.cs#L25)
+* [MasterDetailPage.xaml](RssReader/Views/MasterDetailPage.xaml#L25), [MasterDetailPage.xaml.cs](RssReader/Views/MasterDetailPage.xaml.cs#L25),
+  [DetailPage.xaml](RssReader/Views/DetailPage.xaml#L25) and [DetailPage.xaml.cs](RssReader/Views/DetailPage.xaml.cs#L25)
     - Code that adjusts the display of the articles list, the 
       [WebView](https://msdn.microsoft.com/library/windows/apps/windows.ui.xaml.controls.webview.aspx) showing article content, and 
       the title-bar back button depending on the current window width. 
-* [FeedDataSource.cs](ViewModels/FeedDataSource.cs#L25) and [Serializer.cs](Common/Serializer.cs#L25)
+* [FeedDataSource.cs](RssReader/ViewModels/FeedDataSource.cs#L25) and [Serializer.cs](RssReader/Common/Serializer.cs#L25)
     - Loading default feed data from the app package using [StorageFile.GetFileFromApplicationUriAsync](https://msdn.microsoft.com/library/windows/apps/windows.storage.storagefile.getfilefromapplicationuriasync.aspx).
     - Loading feed and article data from an RSS server using [SyndicationClient.RetrieveFeedAsync](https://msdn.microsoft.com/library/windows/apps/windows.web.syndication.syndicationclient.retrievefeedasync.aspx). 
     - Loading and saving feed and favorites data to/from local storage using [StorageFolder.TryGetItemAsync](https://msdn.microsoft.com/library/windows/apps/windows.storage.storagefolder.trygetitemasync.aspx),
