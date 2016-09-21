@@ -21,6 +21,14 @@ RssReader demonstrates:
 restore app data from local storage.
 * C# and XAML using the MVVM design pattern.
 
+### September 2016 update
+
+This update includes:
+
+* General cleanup, commenting, and refactoring for clarity. 
+* Improved error handling and performance.
+* Fixes for several bugs related to layout, navigation, browser launch, and URL handling. 
+
 ### March 2016 update
 
 This update includes:
@@ -49,6 +57,7 @@ check out the following files for examples of some highlighted features:
   [EditFeedsView.xaml](RssReader/Views/EditFeedsView.xaml#L25), and [Styles.xaml](RssReader/Styles/Styles.xaml#L25)
     - Rich UI experiences and XAML resources for colors, templates, and animated effects. 
 * [AppShell.xaml](RssReader/AppShell.xaml#L25) and [AppShell.xaml.cs](RssReader/AppShell.xaml.cs#L25)
+    - Adapted from the [XAML navigation menu](https://github.com/Microsoft/Windows-universal-samples/tree/master/Samples/XamlNavigation) sample.
     - Use of the [SplitView](https://msdn.microsoft.com/library/windows/apps/windows.ui.xaml.controls.splitview.aspx) control 
       to implement a navigation menu with a hamburger button. 
     - Use of [AdaptiveTrigger](https://msdn.microsoft.com/library/windows/apps/windows.ui.xaml.adaptivetrigger.aspx) with
@@ -59,6 +68,7 @@ check out the following files for examples of some highlighted features:
     - Keyboard support and Frame navigation.
 * [MasterDetailPage.xaml](RssReader/Views/MasterDetailPage.xaml#L25), [MasterDetailPage.xaml.cs](RssReader/Views/MasterDetailPage.xaml.cs#L25),
   [DetailPage.xaml](RssReader/Views/DetailPage.xaml#L25) and [DetailPage.xaml.cs](RssReader/Views/DetailPage.xaml.cs#L25)
+    - Adapted from the [XAML master/detail](https://github.com/Microsoft/Windows-universal-samples/tree/master/Samples/XamlMasterDetail) sample.
     - Code that adjusts the display of the articles list, the 
       [WebView](https://msdn.microsoft.com/library/windows/apps/windows.ui.xaml.controls.webview.aspx) showing article content, and 
       the title-bar back button depending on the current window width. 

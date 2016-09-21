@@ -26,11 +26,13 @@
     x:Class="RssReader.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:common="using:RssReader.Common"
     xmlns:local="using:RssReader">
 
     <Application.Resources>
         <!-- Application-specific resources -->
         <ResourceDictionary>
+            <common:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <ResourceDictionary.MergedDictionaries>
                 <!-- 
                     Styles that define common aspects of the platform look and feel

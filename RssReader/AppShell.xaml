@@ -80,12 +80,14 @@
                     <!--Error icon when selected.-->
                     <FontIcon Glyph="&#xE7BA;" 
                         VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16" 
+                        ToolTipService.ToolTip="{x:Bind Description, Mode=OneWay}"
                         Visibility="{x:Bind IsSelectedInNavList, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
                     <!--Error icon when unselected.-->
                     <FontIcon Glyph="&#xE7BA;"  
                         VerticalAlignment="Center" HorizontalAlignment="Center" 
                         FontSize="16" Foreground="#FFFF8C10"
+                        ToolTipService.ToolTip="{x:Bind Description, Mode=OneWay}"
                         Visibility="{x:Bind IsSelectedInNavList, Mode=OneWay, ConverterParameter=Reverse, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                 </Grid>
                 
@@ -152,7 +154,7 @@
                         The automation Name is set in the ContainerContentChanging event. -->
                     <controls:NavMenuListView x:Name="FeedsList"
                         Margin="0,48,0,0"
-                        ItemsSource="{x:Bind ViewModel.Feeds, Mode=OneWay}" TabIndex="3"
+                        ItemsSource="{x:Bind ViewModel.FeedsWithFavorites, Mode=OneWay}" TabIndex="3"
                         ContainerContentChanging="FeedsListItemContainerContentChanging"
                         SelectionChanged="FeedsList_SelectionChanged"
                         ItemInvoked="FeedsList_ItemInvoked"

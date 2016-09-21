@@ -24,6 +24,7 @@
 
 using RssReader.Common;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
@@ -32,22 +33,104 @@ using Windows.ApplicationModel.Core;
 
 namespace RssReader.ViewModels
 {
+    /// <summary>
+    /// Represents a collection of RSS feeds and user interactions with the feeds. 
+    /// </summary>
     public class MainViewModel : BindableBase
     {
+        /// <summary>
+        /// Initializes a new instance of the MainViewModel class. 
+        /// </summary>
         public MainViewModel()
         {
             Feeds = new ObservableCollection<FeedViewModel>();
-            Feeds.CollectionChanged += (s, e) => OnPropertyChanged(nameof(HasNoFeeds));
+            Feeds.CollectionChanged += (s, e) =>
+            {
+                OnPropertyChanged(nameof(FeedsWithFavorites));
+                OnPropertyChanged(nameof(HasNoFeeds));
+            };
         }
 
-        public ObservableCollection<FeedViewModel> Feeds { get; }
-        public FeedViewModel FavoritesFeed => Feeds.FirstOrDefault();
-        public bool HasNoFeeds => Feeds.Count == 1;
-        public bool IsCurrentFeedFavoritesFeed => CurrentFeed == FavoritesFeed;
-        public async Task SaveFeedsAsync() => await Feeds.SaveAsync();
-        public async Task SaveFavoritesAsync() => await Feeds.SaveFavoritesAsync();
+        /// <summary>
+        /// Gets the feed that represents the starred articles. 
+        /// </summary>
+        public FeedViewModel FavoritesFeed { get; private set; }
 
-        private FeedViewModel _currentFeed;
+        /// <summary>
+        /// Gets the collection of RSS feeds.
+        /// </summary>
+        public ObservableCollection<FeedViewModel> Feeds { get; }
+
+        /// <summary>
+        /// Gets the collection of RSS feeds, including the Favorites feed in the first position. 
+        /// </summary>
+        public IEnumerable<FeedViewModel> FeedsWithFavorites => new[] { FavoritesFeed }.Concat(Feeds);
+
+        /// <summary>
+        /// Occurs when the MainViewModel finishes loading feed data. 
+        /// </summary>
+        public event EventHandler Initialized;
+
+        /// <summary>
+        /// Populates the Feeds list and initializes the CurrentFeed property. 
+        /// </summary>
+        public async Task InitializeFeedsAsync()
+        {
+            FavoritesFeed = await FeedDataSource.GetFavoritesAsync();
+            Feeds.Clear();
+            (await FeedDataSource.GetFeedsAsync()).ForEach(feed => Feeds.Add(feed));
+            CurrentFeed = Feeds.Count == 0 ? FavoritesFeed : Feeds[0];
+            if (FavoritesFeed.Articles.Count == 0) FavoritesFeed.ErrorMessage = NO_ARTICLES_MESSAGE;
+            FavoritesFeed.Articles.CollectionChanged += async (s, e) =>
+            {
+                // This handles list saving for both newly-starred items and for 
+                // reordering of the Favorites list (which causes a Remove followed by an Add). 
+                // List saving for removals due to an unstarring are handled in FeedView.xaml.cs.
+                if (e.Action == NotifyCollectionChangedAction.Add) await SaveFavoritesAsync();
+                FavoritesFeed.ErrorMessage = FavoritesFeed.Articles.Count > 0 ? null : NO_ARTICLES_MESSAGE;
+            };
+            Initialized?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// Updates the FavoritesFeed when an article is starred or unstarred. 
+        /// </summary>
+        public void SyncFavoritesFeed(ArticleViewModel article)
+        {
+            if (article.IsStarred.Value) FavoritesFeed.Articles.Insert(0, article);
+            else
+            {
+                FavoritesFeed.Articles.Remove(article);
+
+                // Save only for removals. Adds are automatically saved via 
+                // CollectionChanged handler in InitializeFeedsAsync.
+                var withoutAwait = SaveFavoritesAsync();
+            }
+        }
+
+        /// <summary>
+        /// Gets a value that indicates whether the feeds list (not counting the Favorites feed) is empty.
+        /// </summary>
+        public bool HasNoFeeds => Feeds.Count == 0;
+
+        /// <summary>
+        /// Gets a value that indicates whether the current feed is the Favorites feed.
+        /// </summary>
+        public bool IsCurrentFeedFavoritesFeed => CurrentFeed == FavoritesFeed;
+
+        /// <summary>
+        /// Saves the feed list (not counting the Favorites feed) to local storage. 
+        /// </summary>
+        public async Task SaveFeedsAsync() => await Feeds.SaveAsync();
+
+        /// <summary>
+        /// Saves the Favorites feed to local storage.
+        /// </summary>
+        public async Task SaveFavoritesAsync() => await FavoritesFeed.SaveFavoritesAsync();
+
+        /// <summary>
+        /// Gets or sets the feed that the user is currently interacting with.
+        /// </summary>
         public FeedViewModel CurrentFeed
         {
             get { return _currentFeed; }
@@ -55,7 +138,6 @@ namespace RssReader.ViewModels
             {
                 if (SetProperty(ref _currentFeed, value))
                 {
-                    OnPropertyChanged(nameof(CurrentFeedAsObject));
                     OnPropertyChanged(nameof(IsCurrentFeedFavoritesFeed));
                     if (_currentFeed.Articles.Count > 0)
                     {
@@ -63,8 +145,9 @@ namespace RssReader.ViewModels
                     }
                     else
                     {
-                        // If the articles have not yet been loaded, wait until 
-                        // they are loaded before selecting the first one. 
+                        // If the articles have not yet been loaded, clear CurrentArticle then
+                        // wait until the articles are loaded before selecting the first one. 
+                        CurrentArticle = null;
                         NotifyCollectionChangedEventHandler handler = null;
                         handler = (s, e) =>
                         {
@@ -79,75 +162,122 @@ namespace RssReader.ViewModels
                 }
             }
         }
-        public object CurrentFeedAsObject
-        {
-            get { return CurrentFeed as object; }
-            set { if (value != null) CurrentFeed = value as FeedViewModel; }
-        }
+        private FeedViewModel _currentFeed;
 
-        private bool suppressDuplicatePropertyChanged = false;
-        private ArticleViewModel _currentArticle;
+        /// <summary>
+        /// Retrieves feed data from the server and updates the appropriate FeedViewModel properties.
+        /// </summary>
+        /// <remarks>
+        /// Extension methods are not bindable, so this method provides a bindable wrapper to 
+        /// the FeedDataSource.RefreshAsync extension method. 
+        /// </remarks>
+        public void RefreshCurrentFeed() { var withoutAwait = CurrentFeed.RefreshAsync(); }
+
+        /// <summary>
+        /// Gets or sets the article that the user is currently viewing. 
+        /// </summary>
         public ArticleViewModel CurrentArticle
         {
             get { return _currentArticle; }
             set
             {
-                if (!SetProperty(ref _currentArticle, value) && !suppressDuplicatePropertyChanged)
-                {
-                    // SetProperty raises PropertyChanged only if the backing field is actually updated.
-                    // Here we raise PropertyChanged even if it the property value doesn't actually change,
-                    // (but only if the update is not coming from the UI via the CurrentArticleAsObject property
-                    // binding). This ensures that the first article will be selected when changing feeds, 
-                    // even if the new feed has the same first article as the last one. 
-                    OnPropertyChanged();
-                }
-                if (!suppressDuplicatePropertyChanged) OnPropertyChanged(nameof(CurrentArticleAsObject));
-                suppressDuplicatePropertyChanged = false;
+                // CurrentArticle is a special case, so it doesn't use SetProperty 
+                // to update the backing field, raising the PropertyChanged event
+                // only when the field value changes. Instead, CurrentArticle raises
+                // PropertyChanged every time the setter is called. This ensures
+                // that the ListView selection is updated when changing feeds, even 
+                // if the first article is the same in both feeds. It also ensures
+                // that clicking an article in the narrow view will always navigate
+                // to the details view, even if the article is already the current one.
+                _currentArticle = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(CurrentArticleAsObject));
             }
         }
-        public object CurrentArticleAsObject
-        {
-            get { return CurrentArticle as object; }
-            set
-            {
-                if (value != null)
-                {
-                    suppressDuplicatePropertyChanged = true;
-                    CurrentArticle = value as ArticleViewModel;
-                }
-            }
-        }
+        private ArticleViewModel _currentArticle;
 
-        private bool _isInDetailsMode = false;
+        /// <summary>
+        /// Gets the current article as an instance of type Object. 
+        /// </summary>
+        public object CurrentArticleAsObject => CurrentArticle as object; 
+
+        /// <summary>
+        /// Gets or sets a value that indicates whether the app is showing the narrow, details-only view. 
+        /// </summary>
         public bool IsInDetailsMode
         {
             get { return _isInDetailsMode; }
             set { SetProperty(ref _isInDetailsMode, value); }
         }
+        private bool _isInDetailsMode = false;
 
-        private bool _isFeedAddedMessageShowing;
+        /// <summary>
+        /// Gets or sets a value indicating whether the message about a successfully-added feed is showing. 
+        /// </summary>
         public bool IsFeedAddedMessageShowing
         {
             get { return _isFeedAddedMessageShowing; }
             set { SetProperty(ref _isFeedAddedMessageShowing, value); }
         }
+        private bool _isFeedAddedMessageShowing;
 
-        private static void DoAfterDelay(int millisecondsDelay, Action action)
+        /// <summary>
+        /// Gets the name of the feed that the user just added to the feeds list.
+        /// </summary>
+        /// <remarks>
+        /// This value diverges from MainViewModel.CurrentFeed as soon as the user adds
+        /// the feed because CurrentFeed is automatically reset to a new FeedViewModel. 
+        /// </remarks>
+        public string NameOfFeedJustAdded
         {
-            var withoutAwait = CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
-                Windows.UI.Core.CoreDispatcherPriority.Normal, 
-                async () => { await Task.Delay(millisecondsDelay); action(); });
+            get { return _nameOfFeedJustAdded; }
+            set { SetProperty(ref _nameOfFeedJustAdded, value); }
         }
+        private string _nameOfFeedJustAdded;
 
+        /// <summary>
+        /// Adds the current feed (in the Add Feed view) to the list of saved feeds.
+        /// </summary>
         public void AddCurrentFeed()
         {
             Feeds.Add(CurrentFeed);
+            NameOfFeedJustAdded = CurrentFeed.Name;
             IsFeedAddedMessageShowing = true;
-            DoAfterDelay(5000, () => IsFeedAddedMessageShowing = false);
+            Helpers.DoAfterDelay(5000, () => IsFeedAddedMessageShowing = false);
             var withoutAwait = SaveFeedsAsync();
         }
 
-        public event EventHandler BadFeedRemoved;
+        /// <summary>
+        /// Adds the current feed to the feeds list, if it hasn't been added already; otherwise, puts the feed into an error state.
+        /// </summary>
+        /// <returns>true if the feed was added; false if the feed has already been added.</returns>
+        public bool TryAddCurrentFeed()
+        {
+            if (Feeds.Contains(CurrentFeed))
+            {
+                CurrentFeed.IsInError = true;
+                CurrentFeed.ErrorMessage = ALREADY_ADDED_MESSAGE;
+                return false;
+            }
+            else
+            {
+                AddCurrentFeed();
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// Removes the specified feeds from the feeds list. 
+        /// </summary>
+        public void RemoveFeeds(IEnumerable<FeedViewModel> feeds)
+        {
+            feeds.ToList().ForEach(feed => Feeds.Remove(feed));
+            var withoutAwait = SaveFeedsAsync();
+        }
+
+        /// <summary>
+        /// Removes the current feed (which is an error state) from the feeds list. 
+        /// </summary>
         public void RemoveBadFeed()
         {
             var index = Feeds.IndexOf(CurrentFeed);
@@ -158,28 +288,11 @@ namespace RssReader.ViewModels
         }
 
         /// <summary>
-        /// Populates the Feeds list and initializes the CurrentFeed and CurrentArticle properties. 
+        /// Occurs when the user deletes a feed that's in an error state. 
         /// </summary>
-        public async Task InitializeFeedsAsync()
-        {
-            Feeds.Clear();
-            (await FeedDataSource.GetFeedsAsync()).ForEach(feed => Feeds.Add(feed));
-            CurrentFeed = Feeds[Feeds.Count == 1 ? 0 : 1];
-            //CurrentArticle = CurrentFeed.Articles.FirstOrDefault() ?? CurrentArticle;
-            if (FavoritesFeed.Articles.Count == 0) FavoritesFeed.ErrorMessage = NO_ARTICLES_MESSAGE;
-            FavoritesFeed.Articles.CollectionChanged += async (s, e) =>
-            {
-                // This handles list saving for both newly-starred items and for 
-                // reordering of the Favorites list (which causes a Remove followed by an Add). 
-                // List saving for removals due to an unstarring are handled in FeedView.xaml.cs.
-                if (e.Action == NotifyCollectionChangedAction.Add) await SaveFavoritesAsync();
-                FavoritesFeed.ErrorMessage = FavoritesFeed.Articles.Count > 0 ? null : NO_ARTICLES_MESSAGE;
-            };
-            Initialized?.Invoke(this, EventArgs.Empty);
-        }
-
-        public event EventHandler Initialized;
+        public event EventHandler BadFeedRemoved;
 
         private const string NO_ARTICLES_MESSAGE = "There are no starred articles.";
+        private const string ALREADY_ADDED_MESSAGE = "This feed has already been added.";
     }
 }

@@ -86,7 +86,7 @@
                 <!--Waiting for response message--> 
                 <ProgressBar Grid.Row="1" 
                              Margin="24, 0"
-                             IsIndeterminate="{x:Bind ViewModel.CurrentFeed.IsLoading, Mode=OneWay}"
+                             IsIndeterminate="True"
                              Visibility="{x:Bind ViewModel.CurrentFeed.IsLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                              Style="{ThemeResource ProgressBarStyle1}"/>
                 
@@ -114,28 +114,31 @@
                          Margin="24,18,24,12"
                          PlaceholderText="RSS feed name" Header="RSS feed name"
                          Text="{x:Bind ViewModel.CurrentFeed.Name, Mode=TwoWay}"
-                         IsEnabled="False" KeyDown="NameTextBox_KeyDown"
+                         IsEnabled="{x:Bind AreFeedControlsEnabled, Mode=OneWay}" 
+                         KeyDown="NameTextBox_KeyDown"
                          Style="{StaticResource TextBoxStyle1}"/>
 
                 <Grid Grid.Row="3" 
                       Margin="24">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="7*"/>
+                        <ColumnDefinition Width="10*"/>
                     </Grid.ColumnDefinitions>
 
                     <Button x:Name="SaveAndLeaveButton"
                             Grid.Column="0" 
-                            Width="120"
+                            HorizontalAlignment="Stretch"
+                            Margin="0,0,10,0"
                             Content="Save" Click="SaveAndLeaveButton_Click"
-                            IsEnabled="False" HorizontalAlignment="Left"
+                            IsEnabled="{x:Bind AreSaveButtonsEnabled, Mode=OneWay}"
                             Style="{StaticResource ButtonStyle2}"/>
                     
                     <Button x:Name="SaveAndStayButton"
                             Grid.Column="1" 
-                            Margin="20,0,0,0" Width="180" 
+                            HorizontalAlignment="Stretch"
+                            Margin="10,0,0,0"
                             Content="Save &amp; add another" Click="SaveAndStayButton_Click"
-                            IsEnabled="False" HorizontalAlignment="Right" 
+                            IsEnabled="{x:Bind AreSaveButtonsEnabled, Mode=OneWay}"
                             Style="{StaticResource ButtonStyle2}"/>
                 </Grid>
 
@@ -145,7 +148,7 @@
                       Visibility="{x:Bind ViewModel.IsFeedAddedMessageShowing, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="20" />
-                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     
                    <FontIcon Glyph="&#xE930;"
@@ -154,16 +157,16 @@
                              FontSize="15" FontFamily="{ThemeResource SymbolThemeFontFamily}"/>
                     
                     <RichTextBlock Grid.Column="1" 
-                             Margin="0" Width="316" Height="Auto" 
+                             Margin="0" Height="Auto" 
                              HorizontalAlignment="Left" VerticalAlignment="Top"
                              TextWrapping="Wrap">
                             
                              <Paragraph FontSize="13" TextAlignment="Left">
-                                 <Run Text="{x:Bind NameOfFeedJustAdded, Mode=OneWay}" 
+                                 <Run Text="{x:Bind ViewModel.NameOfFeedJustAdded, Mode=OneWay}" 
                                     Foreground="{ThemeResource Foreground100BlackBrush}" 
                                     FontWeight="SemiBold"/>
                             
-                                 <Run Text=" was added to your list." 
+                                 <Run Text="was added to your list." 
                                     Foreground="{ThemeResource Foreground100DimGrayBrush}" />
                             </Paragraph>
                     </RichTextBlock> 

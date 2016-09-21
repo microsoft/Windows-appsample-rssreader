@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.UI.Xaml.Controls;
@@ -34,8 +35,37 @@ using Windows.Web.Syndication;
 
 namespace RssReader.ViewModels
 {
+    /// <summary>
+    /// Encapsulates methods that retrieve and save RSS feed data. 
+    /// </summary>
     public static class FeedDataSource
     {
+        /// <summary>
+        /// Gets the favorites feed, either from local storage, 
+        /// or by initializing a new FeedViewModel instance. 
+        /// </summary>
+        public static async Task<FeedViewModel> GetFavoritesAsync()
+        {
+            var favoritesFile = await ApplicationData.Current.LocalFolder
+                .TryGetItemAsync("favorites.dat") as StorageFile;
+            if (favoritesFile != null)
+            {
+                var buffer = await FileIO.ReadBufferAsync(favoritesFile);
+                return Serializer.Deserialize<FeedViewModel>(buffer.ToArray());
+            }
+            else
+            {
+                return new FeedViewModel
+                {
+                    Name = "Favorites",
+                    Description = "Articles that you've starred",
+                    Symbol = Symbol.OutlineStar,
+                    Link = new Uri("http://localhost"),
+                    IsFavoritesFeed = true
+                };
+            }
+        }
+
         /// <summary>
         /// Gets the initial set of feeds, either from local storage or 
         /// from the app package if there is nothing in local storage.
@@ -43,26 +73,6 @@ namespace RssReader.ViewModels
         public static async Task<List<FeedViewModel>> GetFeedsAsync()
         {
             var feeds = new List<FeedViewModel>();
-
-            var favoritesFile = await ApplicationData.Current.LocalFolder.TryGetItemAsync("favorites.dat") as StorageFile;
-            if (favoritesFile != null)
-            {
-                var buffer = await FileIO.ReadBufferAsync(favoritesFile);
-                feeds.Add(Serializer.Deserialize<FeedViewModel>(buffer.ToArray()));
-            }
-            else
-            {
-                var feed = new FeedViewModel
-                {
-                    Name = "Favorites",
-                    Description = "Articles that you've starred",
-                    Symbol = Symbol.OutlineStar, 
-                    Link = new Uri("http://localhost"),
-                    IsFavoritesFeed = true
-                };
-                feeds.Add(feed);
-            }
-
             var feedFile =
                 await ApplicationData.Current.LocalFolder.TryGetItemAsync("feeds.dat") as StorageFile ??
                 await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/feeds.dat"));
@@ -70,71 +80,77 @@ namespace RssReader.ViewModels
             {
                 var bytes = (await FileIO.ReadBufferAsync(feedFile)).ToArray();
                 var feedData = Serializer.Deserialize<string[][]>(bytes);
-                foreach (var feed in feedData) feeds.Add(new FeedViewModel { Name = feed[0], Link = new Uri(feed[1]) });
+                foreach (var feed in feedData)
+                {
+                    var feedVM = new FeedViewModel { Name = feed[0], Link = new Uri(feed[1]) };
+                    feeds.Add(feedVM);
+                    var withoutAwait = feedVM.RefreshAsync();
+                }
             }
-
             return feeds;
         }
 
         /// <summary>
         /// Retrieves feed data from the server and updates the appropriate FeedViewModel properties.
         /// </summary>
-        public static async Task RefreshAsync(this FeedViewModel feedViewModel)
+        private static async Task<bool> TryGetFeedAsync(FeedViewModel feedViewModel, CancellationToken? cancellationToken = null)
+        {
+            try
+            {
+                var feed = await new SyndicationClient().RetrieveFeedAsync(feedViewModel.Link);
+
+                if (cancellationToken.HasValue && cancellationToken.Value.IsCancellationRequested) return false;
+
+                feedViewModel.LastSyncDateTime = DateTime.Now;
+                feedViewModel.Name = String.IsNullOrEmpty(feedViewModel.Name) ? feed.Title.Text : feedViewModel.Name;
+                feedViewModel.Description = feed.Subtitle?.Text ?? feed.Title.Text;
+
+                feed.Items.Select(item => new ArticleViewModel
+                {
+                    Title = item.Title.Text,
+                    Summary = item.Summary == null ? string.Empty :
+                        item.Summary.Text.RegexRemove("\\&.{0,4}\\;").RegexRemove("<.*?>"),
+                    Author = item.Authors.Select(a => a.NodeValue).FirstOrDefault(),
+                    Link = item.ItemUri ?? item.Links.Select(l => l.Uri).FirstOrDefault(),
+                    PublishedDate = item.PublishedDate
+                })
+                .ToList().ForEach(article =>
+                {
+                    var favorites = AppShell.Current.ViewModel.FavoritesFeed;
+                    var existingCopy = favorites.Articles.FirstOrDefault(a => a.Equals(article));
+                    article = existingCopy ?? article;
+                    if (!feedViewModel.Articles.Contains(article)) feedViewModel.Articles.Add(article);
+                });
+                feedViewModel.IsInError = false;
+                feedViewModel.ErrorMessage = null;
+                return true;
+            }
+            catch (Exception)
+            {
+                if (!cancellationToken.HasValue || !cancellationToken.Value.IsCancellationRequested)
+                {
+                    feedViewModel.IsInError = true;
+                    feedViewModel.ErrorMessage = feedViewModel.Articles.Count == 0 ? BAD_URL_MESSAGE : NO_REFRESH_MESSAGE;
+                }
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Attempts to update the feed with new data from the server.
+        /// </summary>
+        public static async Task RefreshAsync(this FeedViewModel feedViewModel, CancellationToken? cancellationToken = null)
         {
             if (feedViewModel.Link.Host == "localhost" ||
                 (feedViewModel.Link.Scheme != "http" && feedViewModel.Link.Scheme != "https")) return;
 
-            feedViewModel.IsInError = false;
-            feedViewModel.ErrorMessage = null;
             feedViewModel.IsLoading = true;
-            feedViewModel.Symbol = Symbol.PostUpdate;
-
-            Func<Task<bool>> tryGetFeed = async () =>
-            { 
-                try
-                {
-                    var feed = await new SyndicationClient().RetrieveFeedAsync(feedViewModel.Link);
-
-                    feedViewModel.Name = String.IsNullOrEmpty(feedViewModel.Name) ? feed.Title.Text : feedViewModel.Name;
-                    feedViewModel.Description = feed.Subtitle?.Text ?? String.Empty;
-
-                    feed.Items.Select(item => new ArticleViewModel
-                    {
-                        Title = item.Title.Text,
-                        Summary = item.Summary == null ? string.Empty :
-                            item.Summary.Text.RegexRemove("\\&.{0,4}\\;").RegexRemove("<.*?>"),
-                        Author = item.Authors.Select(a => a.NodeValue).FirstOrDefault(),
-                        Link = item.ItemUri ?? item.Links.Select(l => l.Uri).FirstOrDefault(),
-                        PublishedDate = item.PublishedDate
-                    })
-                    .ToList().ForEach(article =>
-                    {
-                        var favorites = AppShell.Current.ViewModel.FavoritesFeed;
-                        var existingCopy = favorites.Articles.FirstOrDefault(a => a.Equals(article));
-                        article = existingCopy ?? article;
-                        if (!feedViewModel.Articles.Contains(article)) feedViewModel.Articles.Add(article);
-                    });
-                    return true;
-                }
-                catch (Exception)
-                {
-                    if (feedViewModel.Articles.Count == 0)
-                    {
-                        feedViewModel.IsInError = true;
-                        feedViewModel.ErrorMessage = "Hmm... Are you sure this is an RSS URL?";
-                    }
-                    else
-                    {
-                        // TODO display error state that doesn't replace articles that have already been retrieved.
-                    }
-                    return false;
-                }
-            };
 
             int numberOfAttempts = 5;
             bool success = false;
-            do { success = await tryGetFeed(); }
-            while (!success && numberOfAttempts-- > 0);
+            do { success = await TryGetFeedAsync(feedViewModel, cancellationToken); }
+            while (!success && numberOfAttempts-- > 0 &&
+                (!cancellationToken.HasValue || !cancellationToken.Value.IsCancellationRequested));
 
             feedViewModel.IsLoading = false;
         }
@@ -142,9 +158,8 @@ namespace RssReader.ViewModels
         /// <summary>
         /// Saves the favorites feed (the first feed of the feeds list) to local storage. 
         /// </summary>
-        public static async Task SaveFavoritesAsync(this IEnumerable<FeedViewModel> feeds)
+        public static async Task SaveFavoritesAsync(this FeedViewModel favorites)
         {
-            var favorites = feeds.First();
             var file = await ApplicationData.Current.LocalFolder
                 .CreateFileAsync("favorites.dat", CreationCollisionOption.ReplaceExisting);
             byte[] array = Serializer.Serialize(favorites);
@@ -158,8 +173,11 @@ namespace RssReader.ViewModels
         {
             var file = await ApplicationData.Current.LocalFolder
                 .CreateFileAsync("feeds.dat", CreationCollisionOption.ReplaceExisting);
-            byte[] array = Serializer.Serialize(feeds.Skip(1).Select(feed => new[] { feed.Name, feed.Link.ToString() }).ToArray());
+            byte[] array = Serializer.Serialize(feeds.Select(feed => new[] { feed.Name, feed.Link.ToString() }).ToArray());
             await FileIO.WriteBytesAsync(file, array);
         }
+
+        private const string BAD_URL_MESSAGE = "Hmm... Are you sure this is an RSS URL?";
+        private const string NO_REFRESH_MESSAGE = "Sorry. We can't get more articles right now.";
     }
 }

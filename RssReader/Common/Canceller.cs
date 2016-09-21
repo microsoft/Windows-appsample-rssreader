@@ -23,40 +23,57 @@
 //  ---------------------------------------------------------------------------------
 
 using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace RssReader.Common
 {
     /// <summary>
-    /// Provides a standard change-notification implementation.
+    /// Encapsulates the thread-cancellation mechanism. 
     /// </summary>
-    public abstract class BindableBase : INotifyPropertyChanged
+    public class Canceller : IDisposable
     {
         /// <summary>
-        /// Occurs when a property value changes. 
+        /// Gets or sets the current token source, which will 
+        /// be reset on the next call to the Cancel method. 
         /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
+        private CancellationTokenSource TokenSource { get; set; } = new CancellationTokenSource();
 
         /// <summary>
-        /// Raises the PropertyChanged event for the property with the specified
-        /// name, or the calling property if no name is specified.
+        /// Gets the token from the current token source, which 
+        /// you can cancel with the next call to the Cancel method. 
         /// </summary>
-        public void OnPropertyChanged([CallerMemberName] string propertyName = null) => 
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        public CancellationToken Token => TokenSource.Token;
 
         /// <summary>
-        /// Checks whether the value of the specified field is different than the specified value, and
-        /// if they are different, updates the field and raises the PropertyChanged event for
-        /// the property with the specified name, or the calling property if no name is specified. 
+        /// Cancels the current Token and resets the TokenSource.
         /// </summary>
-        protected bool SetProperty<T>(ref T storage, T value,
-            [CallerMemberName] String propertyName = null)
+        public void Cancel()
         {
-            if (object.Equals(storage, value)) return false;
-            storage = value;
-            OnPropertyChanged(propertyName);
-            return true;
+            TokenSource.Cancel();
+            var t = Token;
+            TokenSource.Dispose();
+            TokenSource = new CancellationTokenSource();
         }
+
+        /// <summary>Releases resources used by the class.</summary>
+        ~Canceller() { Dispose(false); }
+
+        /// <summary>Releases resources used by this class.</summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>Releases resources used by this class.</summary>
+        /// <param name="disposing">true to release both managed and unmanaged resources; 
+        /// false to release only unmanaged resources.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_isDisposed) return;
+            if (disposing) TokenSource.Dispose();
+            _isDisposed = true;
+        }
+        private bool _isDisposed = false;
     }
 }

@@ -36,6 +36,9 @@ namespace RssReader.Views
     public sealed partial class MasterDetailPage : Page
     {
         private MainViewModel ViewModel => AppShell.Current.ViewModel;
+
+        private Canceller Canceller { get; } = new Canceller();
+
         private bool isCurrentFeedNew = false;
 
         public MasterDetailPage()
@@ -46,7 +49,7 @@ namespace RssReader.Views
 
             ArticleWebView.NavigationStarting += async (s, e) =>
             {
-                if (!await ViewModel.CurrentArticle.Link.LaunchBrowserForNonMatchingUriAsync(e))
+                if (e.Uri != null && !await e.LaunchBrowserForNonMatchingUriAsync(ViewModel.CurrentArticle.Link))
                 {
                     // In-app navigation, so hide the WebView control and display the progress 
                     // animation until the page load is completed.
@@ -66,32 +69,37 @@ namespace RssReader.Views
         {
             // Set a flag so that, in narrow mode, details-only navigation doesn't occur if 
             // the CurrentArticle is changed solely as a side-effect of changing the CurrentFeed.
-            if (e.PropertyName == nameof(ViewModel.CurrentFeed)) isCurrentFeedNew = true;
+            if (e.PropertyName == nameof(ViewModel.CurrentFeed))
+            {
+                isCurrentFeedNew = true;
+            }
             else if (e.PropertyName == nameof(ViewModel.CurrentArticle))
             {
-                if (ViewModel.CurrentArticle != null)
-                {
-                    ArticleWebView.Navigate(ViewModel.CurrentArticle.Link);
-                }
-                else
+                if (ViewModel.CurrentArticle == null)
                 {
                     ArticleWebView.NavigateToString(string.Empty);
                 }
-
-                if (AdaptiveStates.CurrentState == NarrowState)
+                else
                 {
-                    bool switchToDetailsView = !isCurrentFeedNew;
-                    isCurrentFeedNew = false;
-                    if (switchToDetailsView)
+                    if (!ViewModel.CurrentArticle.Link.IsEquivalentTo(ArticleWebView.Source))
                     {
-                        // Use "drill in" transition for navigating from master list to detail view
-                        Frame.Navigate(typeof(DetailPage), null, new DrillInNavigationTransitionInfo());
+                        ArticleWebView.Navigate(ViewModel.CurrentArticle.Link);
+                    }
+                    if (AdaptiveStates.CurrentState == NarrowState)
+                    {
+                        bool switchToDetailsView = !isCurrentFeedNew;
+                        isCurrentFeedNew = false;
+                        if (switchToDetailsView)
+                        {
+                            // Use "drill in" transition for navigating from master list to detail view
+                            Frame.Navigate(typeof(DetailPage), null, new DrillInNavigationTransitionInfo());
+                        }
                     }
                 }
             }
         }
 
-        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
 
@@ -106,9 +114,9 @@ namespace RssReader.Views
                 var feedUri = e.Parameter as Uri;
                 if (feedUri != null)
                 {
-                    var feed = ViewModel.Feeds.FirstOrDefault(f => f.Link == feedUri);
-                    ViewModel.CurrentFeed = feed;
-                    await feed.RefreshAsync();
+                    ViewModel.CurrentFeed = ViewModel.FeedsWithFavorites.FirstOrDefault(f => f.Link == feedUri);
+                    Canceller.Cancel();
+                    var withoutAwait = ViewModel.CurrentFeed.RefreshAsync(Canceller.Token);
                 }
             }
             else
@@ -133,7 +141,7 @@ namespace RssReader.Views
         {
             var isNarrow = newState == NarrowState;
 
-            if (isNarrow && oldState == DefaultState)
+            if (isNarrow && oldState == DefaultState && MasterFrame.CurrentSourcePageType == typeof(FeedView))
             {
                 // Resize down to the detail item. Don't play a transition.
                 Frame.Navigate(typeof(DetailPage), null, new SuppressNavigationTransitionInfo());

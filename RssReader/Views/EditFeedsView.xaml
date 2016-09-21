@@ -136,7 +136,7 @@
                    CanReorderItems="True"
                    AllowDrop="True"
                    IsSwipeEnabled="True"
-                   ItemsSource="{x:Bind FeedsWithoutFavorites, Mode=OneWay}"
+                   ItemsSource="{x:Bind ViewModel.Feeds, Mode=OneWay}"
                    ItemTemplate="{StaticResource EditFeedsListItemTemplate}"
                    ItemContainerStyle="{StaticResource ListViewItemEditFeed}"
                    SelectionChanged="{x:Bind SelectionChanged}" />
@@ -153,7 +153,7 @@
                           IsEnabled="{x:Bind CanEdit, Mode=OneWay}" />
                 <AppBarButton Icon="Delete"
                           Label="Delete"
-                          Click="{x:Bind DeleteFeed}"
+                          Click="{x:Bind DeleteSelectedFeeds}"
                           ToolTipService.ToolTip="Delete feed" />
             </CommandBar>
 

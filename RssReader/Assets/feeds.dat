@@ -8,8 +8,12 @@
         <string>http://blogs.windows.com/feed</string>
     </ArrayOfstring>
     <ArrayOfstring>
-        <string>Build 2016</string>
-        <string>https://blogs.windows.com/blog/tag/build-2016/feed</string>
+        <string>The Visual Studio Blog</string>
+        <string>https://blogs.msdn.microsoft.com/visualstudio/feed/</string>
+    </ArrayOfstring>
+    <ArrayOfstring>
+        <string>.NET Blog</string>
+        <string>https://blogs.msdn.microsoft.com/dotnet/feed</string>
     </ArrayOfstring>
     <ArrayOfstring>
         <string>The Fire Hose</string>

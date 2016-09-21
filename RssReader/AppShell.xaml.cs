@@ -78,7 +78,6 @@ namespace RssReader
             {
                 await ViewModel.InitializeFeedsAsync();
                 FeedsList.SelectedIndex = FeedsList.Items.Count > 1 ? 1 : 0;
-
                 var titleBar = Windows.ApplicationModel.Core.CoreApplication.GetCurrentView().TitleBar;
             };
 
@@ -307,6 +306,6 @@ namespace RssReader
         /// using the associated Label of each item.
         /// </summary>
         private void FeedsListItemContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args) =>
-            UpdateAutomationName<FeedViewModel>(args, ((FeedViewModel)args.Item).Name);
+            UpdateAutomationName<FeedViewModel>(args, ((FeedViewModel)args.Item)?.Name);
     }
 }

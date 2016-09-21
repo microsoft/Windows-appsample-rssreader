@@ -42,7 +42,7 @@ namespace RssReader.Views
             InitializeComponent();
 
             ArticleWebView.NavigationStarting += async (s, e) => 
-                await ViewModel.CurrentArticle.Link.LaunchBrowserForNonMatchingUriAsync(e);
+                await e.LaunchBrowserForNonMatchingUriAsync(ViewModel.CurrentArticle.Link);
 
             ArticleWebView.LoadCompleted += (s, e) => ArticleWebView.Visibility = Visibility.Visible;
         }
@@ -53,7 +53,7 @@ namespace RssReader.Views
 
             if (ViewModel.CurrentArticle != null)
             {
-                if (ViewModel.CurrentArticle.Link?.WithoutScheme() != ArticleWebView.Source?.WithoutScheme())
+                if (!ViewModel.CurrentArticle.Link.IsEquivalentTo(ArticleWebView.Source))
                 {
                     ArticleWebView.Navigate(ViewModel.CurrentArticle.Link);
                 }

@@ -32,6 +32,9 @@ namespace RssReader.Common
     /// </summary>
     public static class Serializer
     {
+        /// <summary>
+        /// Serializes the specified object as a byte array.
+        /// </summary>
         public static byte[] Serialize<T>(T obj)
         {
             MemoryStream stream = new MemoryStream();
@@ -40,6 +43,9 @@ namespace RssReader.Common
             return stream.ToArray();
         }
 
+        /// <summary>
+        /// Deserializes the specified byte array as an instance of type T. 
+        /// </summary>
         public static T Deserialize<T>(byte[] buffer)
         {
             MemoryStream stream = new MemoryStream(buffer);

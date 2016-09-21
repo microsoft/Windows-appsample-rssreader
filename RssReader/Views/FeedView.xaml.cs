@@ -30,12 +30,18 @@ using Windows.UI.Xaml.Controls.Primitives;
 namespace RssReader.Views
 {
     /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// Represents the UI for viewing a list of articles from a feed. 
     /// </summary>
     public sealed partial class FeedView : Page
     {
+        /// <summary>
+        /// Gets the MainViewModel used by the app. 
+        /// </summary>
         public MainViewModel ViewModel => AppShell.Current.ViewModel;
 
+        /// <summary>
+        /// Initializes a new instance of the FeedView class. 
+        /// </summary>
         public FeedView()
         {
             this.InitializeComponent();
@@ -44,45 +50,33 @@ namespace RssReader.Views
                 // Realize the UI elements marked x:DeferLoadStrategy="Lazy". 
                 // Deferred loading ensures that these elements do not appear 
                 // in the UI before the feed data is available.
+                FindName("NormalFeedView");
                 FindName("FeedErrorMessage");
                 FindName("FavoritesIsEmptyMessage");
             };
         }
 
-        private void ArticlesListView_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            // Raise PropertyChanged even if the clicked article is already current. This ensures 
-            // that clicking an article in master-only view will always navigate to details-only view. 
-            if (ViewModel.CurrentArticle.Equals(e.ClickedItem as ArticleViewModel))
-            {
-                ViewModel.OnPropertyChanged(nameof(ViewModel.CurrentArticle));
-            }
-        }
+        /// <summary>
+        /// Sets the ViewModel.CurrentArticle property to the clicked item. 
+        /// </summary>
+        /// <remarks>
+        /// The ArticlesListView.ItemsSource property must be bound to a property
+        /// of type Object, so it is bound to ViewModel.CurrentArticleAsObject.
+        /// Making this a two-way binding would require a CurrentArticleAsObject
+        /// setter that updates CurrentArticle. However, CurrentArticle must
+        /// raise the PropertyChanged event with every setter call (not just ones 
+        /// that change its value), which causes an infinite recursion. The easiest
+        /// way to prevent this is to use a one-way binding, and update CurrentArticle
+        /// in this ItemClick event handler. 
+        /// </remarks>
+        private void ArticlesListView_ItemClick(object sender, ItemClickEventArgs e) => 
+            ViewModel.CurrentArticle = e.ClickedItem as ArticleViewModel;
 
-        private void ToggleButton_Toggled(object sender, RoutedEventArgs e)
-        {
-            var toggle = sender as ToggleButton;
-            var article = toggle.DataContext as ArticleViewModel;
+        /// <summary>
+        /// Updates the favorites list when the user stars or unstars an article. 
+        /// </summary>
+        private void ToggleButton_Toggled(object sender, RoutedEventArgs e) =>
+            ViewModel.SyncFavoritesFeed(((ToggleButton)sender).DataContext as ArticleViewModel);
 
-            if (toggle.IsChecked.Value) ViewModel.FavoritesFeed.Articles.Add(article);
-            else
-            {
-                ViewModel.FavoritesFeed.Articles.Remove(article);
-
-                // Save only for removals. Adds are automatically saved via 
-                // CollectionChanged handler in MainViewModel.InitializeFeedsAsync.
-                var withoutAwait = ViewModel.SaveFavoritesAsync();
-            }
-        }
-
-        private async void RefreshFeed_Click(object sender, RoutedEventArgs e)
-        {
-            await ViewModel.CurrentFeed.RefreshAsync();
-        }
-
-        private void RemoveFeed_Click(object sender, RoutedEventArgs e)
-        {
-            ViewModel.RemoveBadFeed();
-        }
     }
 }
