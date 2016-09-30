@@ -1,3 +1,7 @@
+<!---
+  category: Navigation Data ControlsLayoutAndText NetworkingAndWebServices FilesFoldersAndLibraries
+-->
+
 # RssReader sample
 
 **RssReader** is a sample Universal Windows Platform (UWP) app for retrieving RSS feeds and viewing articles. 
