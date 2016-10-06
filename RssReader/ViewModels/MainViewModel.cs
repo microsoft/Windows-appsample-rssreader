@@ -48,6 +48,15 @@ namespace RssReader.ViewModels
             {
                 OnPropertyChanged(nameof(FeedsWithFavorites));
                 OnPropertyChanged(nameof(HasNoFeeds));
+
+                // Save the Feeds collection here only for additions, not including
+                // the bulks additions that occur during initialization. This approach
+                // is necessary to handle list reorderings in the Edit Feeds view. Each 
+                // position change results in a Remove action followed by an Add action, 
+                // so removal is ignored here. For removals that don't involve reordering,
+                // SaveFeedsAsync is called by the methods that handle the removals. 
+                if (suppressSave || e.Action != NotifyCollectionChangedAction.Add) return;
+                var withoutAwait = SaveFeedsAsync();
             };
         }
 
@@ -77,8 +86,12 @@ namespace RssReader.ViewModels
         public async Task InitializeFeedsAsync()
         {
             FavoritesFeed = await FeedDataSource.GetFavoritesAsync();
+
+            suppressSave = true;
             Feeds.Clear();
             (await FeedDataSource.GetFeedsAsync()).ForEach(feed => Feeds.Add(feed));
+            suppressSave = false;
+
             CurrentFeed = Feeds.Count == 0 ? FavoritesFeed : Feeds[0];
             if (FavoritesFeed.Articles.Count == 0) FavoritesFeed.ErrorMessage = NO_ARTICLES_MESSAGE;
             FavoritesFeed.Articles.CollectionChanged += async (s, e) =>
@@ -244,7 +257,6 @@ namespace RssReader.ViewModels
             NameOfFeedJustAdded = CurrentFeed.Name;
             IsFeedAddedMessageShowing = true;
             Helpers.DoAfterDelay(5000, () => IsFeedAddedMessageShowing = false);
-            var withoutAwait = SaveFeedsAsync();
         }
 
         /// <summary>
@@ -292,6 +304,7 @@ namespace RssReader.ViewModels
         /// </summary>
         public event EventHandler BadFeedRemoved;
 
+        private bool suppressSave = true;
         private const string NO_ARTICLES_MESSAGE = "There are no starred articles.";
         private const string ALREADY_ADDED_MESSAGE = "This feed has already been added.";
     }
