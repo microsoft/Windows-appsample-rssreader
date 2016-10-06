@@ -22,16 +22,15 @@
 //  THE SOFTWARE. 
 -->
 
-<Page
-    x:Class="RssReader.Views.MasterDetailPage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:RssReader.Views"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    NavigationCacheMode="Required"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+<Page x:Class="RssReader.Views.MasterDetailPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="using:RssReader.Views"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d"
+      NavigationCacheMode="Required"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Page.Transitions>
         <TransitionCollection>
             <NavigationThemeTransition />
@@ -40,7 +39,8 @@
 
     <Grid x:Name="LayoutRoot">
         <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup x:Name="AdaptiveStates" CurrentStateChanged="AdaptiveStates_CurrentStateChanged">
+            <VisualStateGroup x:Name="AdaptiveStates"
+                              CurrentStateChanged="AdaptiveStates_CurrentStateChanged">
                 <VisualState x:Name="DefaultState">
                     <VisualState.StateTriggers>
                         <AdaptiveTrigger MinWindowWidth="720" />
@@ -51,24 +51,34 @@
                         <AdaptiveTrigger MinWindowWidth="0" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="MasterColumn.Width" Value="*" />
-                        <Setter Target="DetailColumn.Width" Value="0" />
+                        <Setter Target="MasterColumn.Width"
+                                Value="*" />
+                        <Setter Target="DetailColumn.Width"
+                                Value="0" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition x:Name="MasterColumn" Width="360" />
-            <ColumnDefinition x:Name="DetailColumn" Width="*" />
+            <ColumnDefinition x:Name="MasterColumn"
+                              Width="360" />
+            <ColumnDefinition x:Name="DetailColumn"
+                              Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Frame x:Name="MasterFrame"/>
+        <Frame x:Name="MasterFrame" />
 
-        <ProgressBar x:Name="LoadingProgressBar" Visibility="Collapsed"
-            Grid.Column="1" Margin="24,8" IsIndeterminate="True" Style="{ThemeResource ProgressBarStyle1}" />
+        <ProgressBar x:Name="LoadingProgressBar"
+                     Visibility="Collapsed"
+                     Grid.Column="1"
+                     Margin="24,8"
+                     IsIndeterminate="True"
+                     Style="{ThemeResource ProgressBarStyle1}" />
 
-        <WebView x:Name="ArticleWebView" Grid.Column="1" Visibility="Collapsed"/>
+        <WebView x:Name="ArticleWebView"
+                 Grid.Column="1"
+                 Visibility="Collapsed" />
 
     </Grid>
 </Page>

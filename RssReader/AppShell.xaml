@@ -45,10 +45,11 @@
     -->
 
     <Page.Resources>
-        
-         <common:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-         
-        <DataTemplate x:Key="NavMenuItemTemplate" x:DataType="local:NavMenuItem">
+
+        <common:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+
+        <DataTemplate x:Key="NavMenuItemTemplate"
+                      x:DataType="local:NavMenuItem">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="48" />
@@ -60,17 +61,20 @@
                      redundant information when the label is shown.-->
                 <FontIcon x:Name="Glyph"
                           Glyph="{x:Bind SymbolAsChar}"
-                          VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16"
+                          VerticalAlignment="Center"
+                          HorizontalAlignment="Center"
+                          FontSize="16"
                           ToolTipService.ToolTip="{x:Bind Label}" />
                 <TextBlock x:Name="Text"
                            Grid.Column="1"
                            Text="{x:Bind Label}"
                            TextWrapping="NoWrap"
-                           Style="{StaticResource BodyTextBlockStyle}"/>
+                           Style="{StaticResource BodyTextBlockStyle}" />
             </Grid>
         </DataTemplate>
-        
-         <DataTemplate x:Key="FeedsListItemTemplate" x:DataType="viewmodels:FeedViewModel">
+
+        <DataTemplate x:Key="FeedsListItemTemplate"
+                      x:DataType="viewmodels:FeedViewModel">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="48" />
@@ -78,33 +82,41 @@
                 </Grid.ColumnDefinitions>
                 <Grid Visibility="{x:Bind IsInError, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <!--Error icon when selected.-->
-                    <FontIcon Glyph="&#xE7BA;" 
-                        VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16" 
-                        ToolTipService.ToolTip="{x:Bind Description, Mode=OneWay}"
-                        Visibility="{x:Bind IsSelectedInNavList, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    <FontIcon Glyph="&#xE7BA;"
+                              VerticalAlignment="Center"
+                              HorizontalAlignment="Center"
+                              FontSize="16"
+                              ToolTipService.ToolTip="{x:Bind Description, Mode=OneWay}"
+                              Visibility="{x:Bind IsSelectedInNavList, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                     <!--Error icon when unselected.-->
-                    <FontIcon Glyph="&#xE7BA;"  
-                        VerticalAlignment="Center" HorizontalAlignment="Center" 
-                        FontSize="16" Foreground="#FFFF8C10"
-                        ToolTipService.ToolTip="{x:Bind Description, Mode=OneWay}"
-                        Visibility="{x:Bind IsSelectedInNavList, Mode=OneWay, ConverterParameter=Reverse, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    <FontIcon Glyph="&#xE7BA;"
+                              VerticalAlignment="Center"
+                              HorizontalAlignment="Center"
+                              FontSize="16"
+                              Foreground="#FFFF8C10"
+                              ToolTipService.ToolTip="{x:Bind Description, Mode=OneWay}"
+                              Visibility="{x:Bind IsSelectedInNavList, Mode=OneWay, ConverterParameter=Reverse, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 </Grid>
-                
-                <FontIcon x:Name="Glyph" 
-                         Glyph="{x:Bind SymbolAsChar, Mode=OneWay}"  
-                         VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16"
-                         ToolTipService.ToolTip="{x:Bind Description, Mode=OneWay}"
-                         Visibility="{x:Bind IsInError, Mode=OneWay, ConverterParameter=Reverse, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                
-                <TextBlock x:Name="Text" 
-                           Grid.Column="1" 
+
+                <FontIcon x:Name="Glyph"
+                          Glyph="{x:Bind SymbolAsChar, Mode=OneWay}"
+                          VerticalAlignment="Center"
+                          HorizontalAlignment="Center"
+                          FontSize="16"
+                          ToolTipService.ToolTip="{x:Bind Description, Mode=OneWay}"
+                          Visibility="{x:Bind IsInError, Mode=OneWay, ConverterParameter=Reverse, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                <TextBlock x:Name="Text"
+                           Grid.Column="1"
                            Text="{x:Bind Name, Mode=OneWay}"
-                           TextWrapping="NoWrap" MaxWidth="210" TextTrimming="CharacterEllipsis"
-                           Style="{StaticResource BodyTextBlockStyle}"  />
+                           TextWrapping="NoWrap"
+                           MaxWidth="210"
+                           TextTrimming="CharacterEllipsis"
+                           Style="{StaticResource BodyTextBlockStyle}" />
             </Grid>
         </DataTemplate>
-       
+
     </Page.Resources>
 
     <Grid x:Name="LayoutRoot">
@@ -116,8 +128,10 @@
                         <AdaptiveTrigger MinWindowWidth="{StaticResource LargeWindowSnapPoint}" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="RootSplitView.DisplayMode" Value="CompactInline" />
-                        <Setter Target="RootSplitView.IsPaneOpen" Value="True" />
+                        <Setter Target="RootSplitView.DisplayMode"
+                                Value="CompactInline" />
+                        <Setter Target="RootSplitView.IsPaneOpen"
+                                Value="True" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState>
@@ -125,8 +139,10 @@
                         <AdaptiveTrigger MinWindowWidth="{StaticResource MediumWindowSnapPoint}" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="RootSplitView.DisplayMode" Value="CompactOverlay" />
-                        <Setter Target="RootSplitView.IsPaneOpen" Value="False" />
+                        <Setter Target="RootSplitView.DisplayMode"
+                                Value="CompactOverlay" />
+                        <Setter Target="RootSplitView.IsPaneOpen"
+                                Value="False" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState>
@@ -134,15 +150,20 @@
                         <AdaptiveTrigger MinWindowWidth="{StaticResource MinWindowSnapPoint}" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="RootSplitView.DisplayMode" Value="Overlay" />
-                        <Setter Target="RootSplitView.IsPaneOpen" Value="False" />
+                        <Setter Target="RootSplitView.DisplayMode"
+                                Value="Overlay" />
+                        <Setter Target="RootSplitView.IsPaneOpen"
+                                Value="False" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
         <!-- Top-level navigation menu + app content -->
-        <SplitView x:Name="RootSplitView" DisplayMode="CompactInline" OpenPaneLength="280" IsTabStop="False">
+        <SplitView x:Name="RootSplitView"
+                   DisplayMode="CompactInline"
+                   OpenPaneLength="280"
+                   IsTabStop="False">
             <SplitView.Pane>
                 <Grid Background="{ThemeResource Background100OffWhiteBrush}">
                     <Grid.RowDefinitions>
@@ -153,33 +174,40 @@
                     <!-- A custom ListView to display the items in the pane.  
                         The automation Name is set in the ContainerContentChanging event. -->
                     <controls:NavMenuListView x:Name="FeedsList"
-                        Margin="0,48,0,0"
-                        ItemsSource="{x:Bind ViewModel.FeedsWithFavorites, Mode=OneWay}" TabIndex="3"
-                        ContainerContentChanging="FeedsListItemContainerContentChanging"
-                        SelectionChanged="FeedsList_SelectionChanged"
-                        ItemInvoked="FeedsList_ItemInvoked"
-                        ItemContainerStyle="{StaticResource NavMenuItemContainerStyle}"
-                        ItemTemplate="{StaticResource FeedsListItemTemplate}"/>
-                    <Rectangle x:Name="NavPaneDivider" Grid.Row="1"
-                        Margin="0" Width="280" Height="1" HorizontalAlignment="Stretch" 
-                        Fill="{ThemeResource Border100PaleRoseBrush}"/>
+                                              Margin="0,48,0,0"
+                                              ItemsSource="{x:Bind ViewModel.FeedsWithFavorites, Mode=OneWay}"
+                                              TabIndex="3"
+                                              ContainerContentChanging="FeedsListItemContainerContentChanging"
+                                              SelectionChanged="FeedsList_SelectionChanged"
+                                              ItemInvoked="FeedsList_ItemInvoked"
+                                              ItemContainerStyle="{StaticResource NavMenuItemContainerStyle}"
+                                              ItemTemplate="{StaticResource FeedsListItemTemplate}" />
+                    <Rectangle x:Name="NavPaneDivider"
+                               Grid.Row="1"
+                               Margin="0"
+                               Width="280"
+                               Height="1"
+                               HorizontalAlignment="Stretch"
+                               Fill="{ThemeResource Border100PaleRoseBrush}" />
                     <controls:NavMenuListView x:Name="NavMenuList"
-                        Grid.Row="2" 
-                        Margin="0"
-                        ItemsSource="{x:Bind NavList}" TabIndex="4"
-                        ContainerContentChanging="NavMenuItemContainerContentChanging"
-                        ItemInvoked="NavMenuList_ItemInvoked" 
-                        ItemContainerStyle="{StaticResource NavMenuItemContainerStyle}"
-                        ItemTemplate="{StaticResource NavMenuItemTemplate}"/>
+                                              Grid.Row="2"
+                                              Margin="0"
+                                              ItemsSource="{x:Bind NavList}"
+                                              TabIndex="4"
+                                              ContainerContentChanging="NavMenuItemContainerContentChanging"
+                                              ItemInvoked="NavMenuList_ItemInvoked"
+                                              ItemContainerStyle="{StaticResource NavMenuItemContainerStyle}"
+                                              ItemTemplate="{StaticResource NavMenuItemTemplate}" />
                 </Grid>
             </SplitView.Pane>
             <SplitView.Content>
                 <!-- OnNavigatingToPage we synchronize the selected item in the nav menu with the current page.
                  OnNavigatedToPage we move keyboard focus to the first item on the page after it's loaded. -->
                 <Frame x:Name="AppShellFrame"
-                   Margin="0"
-                   Navigating="OnNavigatingToPage" Navigated="OnNavigatedToPage"
-                   Background="White">
+                       Margin="0"
+                       Navigating="OnNavigatingToPage"
+                       Navigated="OnNavigatedToPage"
+                       Background="White">
                     <Frame.ContentTransitions>
                         <TransitionCollection>
                             <NavigationThemeTransition>
@@ -195,13 +223,14 @@
 
         <!-- Declared last to have it rendered above everything else, but it needs to be the first item in the tab sequence. -->
         <ToggleButton x:Name="TogglePaneButton"
-            Visibility="{x:Bind ViewModel.IsInDetailsMode, Mode=OneWay, ConverterParameter=Reverse, Converter={StaticResource BooleanToVisibilityConverter}}"
-            Margin="0"
-            TabIndex="1" 
-            Checked="{x:Bind CheckTogglePaneButtonSizeChanged}"
-            Unchecked="{x:Bind CheckTogglePaneButtonSizeChanged}"
-            IsChecked="{Binding IsPaneOpen, ElementName=RootSplitView, Mode=TwoWay}"
-            AutomationProperties.Name="Menu" ToolTipService.ToolTip="Menu"
-            Style="{StaticResource SplitViewTogglePaneButtonStyle}"/>
+                      Visibility="{x:Bind ViewModel.IsInDetailsMode, Mode=OneWay, ConverterParameter=Reverse, Converter={StaticResource BooleanToVisibilityConverter}}"
+                      Margin="0"
+                      TabIndex="1"
+                      Checked="{x:Bind CheckTogglePaneButtonSizeChanged}"
+                      Unchecked="{x:Bind CheckTogglePaneButtonSizeChanged}"
+                      IsChecked="{Binding IsPaneOpen, ElementName=RootSplitView, Mode=TwoWay}"
+                      AutomationProperties.Name="Menu"
+                      ToolTipService.ToolTip="Menu"
+                      Style="{StaticResource SplitViewTogglePaneButtonStyle}" />
     </Grid>
 </Page>

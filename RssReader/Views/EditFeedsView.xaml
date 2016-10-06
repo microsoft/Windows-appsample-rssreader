@@ -42,8 +42,8 @@
                 <TextBlock Text="{x:Bind Name, Mode=OneWay}"
                            TextWrapping="NoWrap"
                            Visibility="{x:Bind IsInEdit, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Reverse}"
-                           Style="{StaticResource BodyTextBlockStyle}"/>
-                
+                           Style="{StaticResource BodyTextBlockStyle}" />
+
                 <TextBox x:Name="EditTextBox"
                          Text="{x:Bind Name, Mode=TwoWay}"
                          LostFocus="EndEdit"
@@ -65,36 +65,42 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <!--Instruction content-->
-                <Grid Background="{ThemeResource Background100PastelLemonBrush}" HorizontalAlignment="Stretch">
-                    <Image Width="140" Height="96"
+            <Grid Background="{ThemeResource Background100PastelLemonBrush}"
+                  HorizontalAlignment="Stretch">
+                <Image Width="140"
+                       Height="96"
                        Source="ms-appx:///Assets/icon_noeditfeeds.png"
-                       VerticalAlignment="Center" HorizontalAlignment="Center" />
-                </Grid>
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center" />
+            </Grid>
 
-                <TextBlock Grid.Row="1"
+            <TextBlock Grid.Row="1"
                        Margin="24,12"
                        Text="Aw shucks! You have no feeds now."
                        TextWrapping="Wrap"
                        Foreground="{ThemeResource Foreground100CrimsonBrush}"
                        Style="{ThemeResource SubtitleTextBlockStyle}" />
 
-                <Rectangle Grid.Row="2"
-                       Margin="24,0.333,24,0" Height="1"
-                       HorizontalAlignment="Stretch" VerticalAlignment="Bottom"
+            <Rectangle Grid.Row="2"
+                       Margin="24,0.333,24,0"
+                       Height="1"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Bottom"
                        Fill="{ThemeResource Border100PaleRoseBrush}" />
 
-                <TextBlock Grid.Row="3" 
+            <TextBlock Grid.Row="3"
                        Margin="24,24,24,12"
                        Text="Go ahead and add a feed or three."
                        TextWrapping="Wrap"
                        Foreground="{ThemeResource Foreground100DimGrayBrush}"
                        Style="{ThemeResource BodyTextBlockStyle}" />
-            
-                <Button Grid.Row="4"
-                        Margin="24,0" Width="120"
-                        Content="Add a feed"
-                        Click="{x:Bind AddFeed}"
-                        Style="{StaticResource ButtonStyle2}"/>
+
+            <Button Grid.Row="4"
+                    Margin="24,0"
+                    Width="120"
+                    Content="Add a feed"
+                    Click="{x:Bind AddFeed}"
+                    Style="{StaticResource ButtonStyle2}" />
 
         </Grid>
 
@@ -110,51 +116,54 @@
 
             <controls:PageHeader>
                 <controls:PageHeader.HeaderContent>
-                    <TextBlock Text="Edit your feeds"   
+                    <TextBlock Text="Edit your feeds"
                                Foreground="{ThemeResource Foreground100CrimsonBrush}"
                                Style="{ThemeResource SubtitleTextBlockStyle}" />
                 </controls:PageHeader.HeaderContent>
             </controls:PageHeader>
 
             <Rectangle Grid.Row="1"
-                   Margin="24,0" Height="1"
-                   HorizontalAlignment="Stretch"
-                   Fill="{ThemeResource Border100PaleRoseBrush}" />
+                       Margin="24,0"
+                       Height="1"
+                       HorizontalAlignment="Stretch"
+                       Fill="{ThemeResource Border100PaleRoseBrush}" />
 
             <TextBlock x:Name="EditRSSHelp"
-                   Grid.Row="2"
-                   Margin="24,24,24,12"
-                   Text="Personalize your views. You can either change a title or delete a RSS feed. You can even arrange your RSS feeds in any order as you like."
-                   TextWrapping="Wrap" VerticalAlignment="Top"
-                   Foreground="{ThemeResource Foreground100DimGrayBrush}"
-                   Style="{StaticResource CaptionTextBlockStyle}"/>
+                       Grid.Row="2"
+                       Margin="24,24,24,12"
+                       Text="Personalize your views. You can either change a title or delete a RSS feed. You can even arrange your RSS feeds in any order as you like."
+                       TextWrapping="Wrap"
+                       VerticalAlignment="Top"
+                       Foreground="{ThemeResource Foreground100DimGrayBrush}"
+                       Style="{StaticResource CaptionTextBlockStyle}" />
 
-            <ListView x:Name="EditFeedsList" Grid.Row="3" 
-                   Margin="24,12,0,0"
-                   IsMultiSelectCheckBoxEnabled="True"
-                   SelectionMode="Multiple"
-                   CanReorderItems="True"
-                   AllowDrop="True"
-                   IsSwipeEnabled="True"
-                   ItemsSource="{x:Bind ViewModel.Feeds, Mode=OneWay}"
-                   ItemTemplate="{StaticResource EditFeedsListItemTemplate}"
-                   ItemContainerStyle="{StaticResource ListViewItemEditFeed}"
-                   SelectionChanged="{x:Bind SelectionChanged}" />
-            
+            <ListView x:Name="EditFeedsList"
+                      Grid.Row="3"
+                      Margin="24,12,0,0"
+                      IsMultiSelectCheckBoxEnabled="True"
+                      SelectionMode="Multiple"
+                      CanReorderItems="True"
+                      AllowDrop="True"
+                      IsSwipeEnabled="True"
+                      ItemsSource="{x:Bind ViewModel.Feeds, Mode=OneWay}"
+                      ItemTemplate="{StaticResource EditFeedsListItemTemplate}"
+                      ItemContainerStyle="{StaticResource ListViewItemEditFeed}"
+                      SelectionChanged="{x:Bind SelectionChanged}" />
+
             <CommandBar Grid.Row="4">
                 <AppBarButton Icon="Add"
-                          Label="Add feed"
-                          Click="{x:Bind AddFeed}"
-                          ToolTipService.ToolTip="Add feed" />
+                              Label="Add feed"
+                              Click="{x:Bind AddFeed}"
+                              ToolTipService.ToolTip="Add feed" />
                 <AppBarButton Icon="Edit"
-                          Label="Rename"
-                          ToolTipService.ToolTip="Edit feed"
-                          Click="{x:Bind EditFeed}"
-                          IsEnabled="{x:Bind CanEdit, Mode=OneWay}" />
+                              Label="Rename"
+                              ToolTipService.ToolTip="Edit feed"
+                              Click="{x:Bind EditFeed}"
+                              IsEnabled="{x:Bind CanEdit, Mode=OneWay}" />
                 <AppBarButton Icon="Delete"
-                          Label="Delete"
-                          Click="{x:Bind DeleteSelectedFeeds}"
-                          ToolTipService.ToolTip="Delete feed" />
+                              Label="Delete"
+                              Click="{x:Bind DeleteSelectedFeeds}"
+                              ToolTipService.ToolTip="Delete feed" />
             </CommandBar>
 
         </Grid>

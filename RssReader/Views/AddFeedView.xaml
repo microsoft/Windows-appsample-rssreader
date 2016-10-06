@@ -50,128 +50,142 @@
             <controls:PageHeader.HeaderContent>
                 <TextBlock Text="Add a feed"
                            Foreground="{ThemeResource Foreground100CrimsonBrush}"
-                           Style="{ThemeResource SubtitleTextBlockStyle}"/>
+                           Style="{ThemeResource SubtitleTextBlockStyle}" />
             </controls:PageHeader.HeaderContent>
         </controls:PageHeader>
 
-        <Rectangle Grid.Row="1" 
-                   Margin="24,0"  
-                   Height="1" HorizontalAlignment="Stretch"
+        <Rectangle Grid.Row="1"
+                   Margin="24,0"
+                   Height="1"
+                   HorizontalAlignment="Stretch"
                    Fill="{ThemeResource Border100PaleRoseBrush}" />
 
         <TextBlock x:Name="AddRSSHelp"
-                   Grid.Row="2" 
+                   Grid.Row="2"
                    Margin="24,24,24,0"
-                   Text="Enter or paste the URL to a publication's RSS Feed below to add it to your list." 
-                   TextWrapping="Wrap" VerticalAlignment="Top"
+                   Text="Enter or paste the URL to a publication's RSS Feed below to add it to your list."
+                   TextWrapping="Wrap"
+                   VerticalAlignment="Top"
                    Foreground="{ThemeResource Foreground100DimGrayBrush}"
-                   Style="{StaticResource CaptionTextBlockStyle}"/>
+                   Style="{StaticResource CaptionTextBlockStyle}" />
 
         <Grid Grid.Row="3">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
 
-                </Grid.RowDefinitions>
-                <TextBox x:Name="LinkTextBox"
-                         Grid.Row="0" Margin="24,24,24,12"
-                         Text="{x:Bind ViewModel.CurrentFeed.LinkAsString, Mode=TwoWay}"
-                         PlaceholderText="RSS feed URL" Header="RSS feed URL"
-                         KeyDown="LinkTextBox_KeyDown"
-                         Style="{StaticResource TextBoxStyle1}"/>
-                
-                <!--Waiting for response message--> 
-                <ProgressBar Grid.Row="1" 
-                             Margin="24, 0"
-                             IsIndeterminate="True"
-                             Visibility="{x:Bind ViewModel.CurrentFeed.IsLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                             Style="{ThemeResource ProgressBarStyle1}"/>
-                
-                <!--Error message-->
-                <Grid Grid.Row="1" 
-                      Margin="24, 0" 
-                      Visibility="{x:Bind ViewModel.CurrentFeed.IsInError, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
-                      <Grid.ColumnDefinitions>
-                         <ColumnDefinition Width="20"/>
-                         <ColumnDefinition Width="Auto"/>
-                      </Grid.ColumnDefinitions>
+            </Grid.RowDefinitions>
+            <TextBox x:Name="LinkTextBox"
+                     Grid.Row="0"
+                     Margin="24,24,24,12"
+                     Text="{x:Bind ViewModel.CurrentFeed.LinkAsString, Mode=TwoWay}"
+                     PlaceholderText="RSS feed URL"
+                     Header="RSS feed URL"
+                     KeyDown="LinkTextBox_KeyDown"
+                     Style="{StaticResource TextBoxStyle1}" />
 
-                      <FontIcon Margin="0,0,5,0" 
-                         Glyph="&#xE7BA;" Foreground="{ThemeResource Foreground100AmberBrush}" FontSize="15" 
-                         FontFamily="{ThemeResource SymbolThemeFontFamily}"/>
-                    
-                      <TextBlock Grid.Column="1" 
-                         Text="{x:Bind ViewModel.CurrentFeed.ErrorMessage, Mode=OneWay}"
-                         Foreground="{ThemeResource Foreground100DimGrayBrush}" 
-                         Style="{ThemeResource CaptionTextBlockStyle}" />
-                </Grid>
+            <!--Waiting for response message-->
+            <ProgressBar Grid.Row="1"
+                         Margin="24, 0"
+                         IsIndeterminate="True"
+                         Visibility="{x:Bind ViewModel.CurrentFeed.IsLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                         Style="{ThemeResource ProgressBarStyle1}" />
 
-                <TextBox x:Name="NameTextBox"
-                         Grid.Row="2" 
-                         Margin="24,18,24,12"
-                         PlaceholderText="RSS feed name" Header="RSS feed name"
-                         Text="{x:Bind ViewModel.CurrentFeed.Name, Mode=TwoWay}"
-                         IsEnabled="{x:Bind AreFeedControlsEnabled, Mode=OneWay}" 
-                         KeyDown="NameTextBox_KeyDown"
-                         Style="{StaticResource TextBoxStyle1}"/>
+            <!--Error message-->
+            <Grid Grid.Row="1"
+                  Margin="24, 0"
+                  Visibility="{x:Bind ViewModel.CurrentFeed.IsInError, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="20" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
 
-                <Grid Grid.Row="3" 
-                      Margin="24">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="7*"/>
-                        <ColumnDefinition Width="10*"/>
-                    </Grid.ColumnDefinitions>
+                <FontIcon Margin="0,0,5,0"
+                          Glyph="&#xE7BA;"
+                          Foreground="{ThemeResource Foreground100AmberBrush}"
+                          FontSize="15"
+                          FontFamily="{ThemeResource SymbolThemeFontFamily}" />
 
-                    <Button x:Name="SaveAndLeaveButton"
-                            Grid.Column="0" 
-                            HorizontalAlignment="Stretch"
-                            Margin="0,0,10,0"
-                            Content="Save" Click="SaveAndLeaveButton_Click"
-                            IsEnabled="{x:Bind AreSaveButtonsEnabled, Mode=OneWay}"
-                            Style="{StaticResource ButtonStyle2}"/>
-                    
-                    <Button x:Name="SaveAndStayButton"
-                            Grid.Column="1" 
-                            HorizontalAlignment="Stretch"
-                            Margin="10,0,0,0"
-                            Content="Save &amp; add another" Click="SaveAndStayButton_Click"
-                            IsEnabled="{x:Bind AreSaveButtonsEnabled, Mode=OneWay}"
-                            Style="{StaticResource ButtonStyle2}"/>
-                </Grid>
+                <TextBlock Grid.Column="1"
+                           Text="{x:Bind ViewModel.CurrentFeed.ErrorMessage, Mode=OneWay}"
+                           Foreground="{ThemeResource Foreground100DimGrayBrush}"
+                           Style="{ThemeResource CaptionTextBlockStyle}" />
+            </Grid>
 
-                <!--Success message; disappears after five seconds.-->
-                <Grid Grid.Row="4" 
-                      Margin="24,6,24,0" 
-                      Visibility="{x:Bind ViewModel.IsFeedAddedMessageShowing, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="20" />
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    
-                   <FontIcon Glyph="&#xE930;"
-                             HorizontalAlignment="Left" VerticalAlignment="Top"
-                             Foreground="{ThemeResource Foreground100FieldGreenBrush}" 
-                             FontSize="15" FontFamily="{ThemeResource SymbolThemeFontFamily}"/>
-                    
-                    <RichTextBlock Grid.Column="1" 
-                             Margin="0" Height="Auto" 
-                             HorizontalAlignment="Left" VerticalAlignment="Top"
-                             TextWrapping="Wrap">
-                            
-                             <Paragraph FontSize="13" TextAlignment="Left">
-                                 <Run Text="{x:Bind ViewModel.NameOfFeedJustAdded, Mode=OneWay}" 
-                                    Foreground="{ThemeResource Foreground100BlackBrush}" 
-                                    FontWeight="SemiBold"/>
-                            
-                                 <Run Text="was added to your list." 
-                                    Foreground="{ThemeResource Foreground100DimGrayBrush}" />
-                            </Paragraph>
-                    </RichTextBlock> 
+            <TextBox x:Name="NameTextBox"
+                     Grid.Row="2"
+                     Margin="24,18,24,12"
+                     PlaceholderText="RSS feed name"
+                     Header="RSS feed name"
+                     Text="{x:Bind ViewModel.CurrentFeed.Name, Mode=TwoWay}"
+                     IsEnabled="{x:Bind AreFeedControlsEnabled, Mode=OneWay}"
+                     KeyDown="NameTextBox_KeyDown"
+                     Style="{StaticResource TextBoxStyle1}" />
 
-                </Grid>
+            <Grid Grid.Row="3"
+                  Margin="24">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="7*" />
+                    <ColumnDefinition Width="10*" />
+                </Grid.ColumnDefinitions>
+
+                <Button x:Name="SaveAndLeaveButton"
+                        Grid.Column="0"
+                        HorizontalAlignment="Stretch"
+                        Margin="0,0,10,0"
+                        Content="Save"
+                        Click="SaveAndLeaveButton_Click"
+                        IsEnabled="{x:Bind AreSaveButtonsEnabled, Mode=OneWay}"
+                        Style="{StaticResource ButtonStyle2}" />
+
+                <Button x:Name="SaveAndStayButton"
+                        Grid.Column="1"
+                        HorizontalAlignment="Stretch"
+                        Margin="10,0,0,0"
+                        Content="Save &amp; add another"
+                        Click="SaveAndStayButton_Click"
+                        IsEnabled="{x:Bind AreSaveButtonsEnabled, Mode=OneWay}"
+                        Style="{StaticResource ButtonStyle2}" />
+            </Grid>
+
+            <!--Success message; disappears after five seconds.-->
+            <Grid Grid.Row="4"
+                  Margin="24,6,24,0"
+                  Visibility="{x:Bind ViewModel.IsFeedAddedMessageShowing, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="20" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <FontIcon Glyph="&#xE930;"
+                          HorizontalAlignment="Left"
+                          VerticalAlignment="Top"
+                          Foreground="{ThemeResource Foreground100FieldGreenBrush}"
+                          FontSize="15"
+                          FontFamily="{ThemeResource SymbolThemeFontFamily}" />
+
+                <RichTextBlock Grid.Column="1"
+                               Margin="0"
+                               Height="Auto"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Top"
+                               TextWrapping="Wrap">
+
+                    <Paragraph FontSize="13"
+                               TextAlignment="Left">
+                        <Run Text="{x:Bind ViewModel.NameOfFeedJustAdded, Mode=OneWay}"
+                             Foreground="{ThemeResource Foreground100BlackBrush}"
+                             FontWeight="SemiBold" />
+
+                        <Run Text="was added to your list."
+                             Foreground="{ThemeResource Foreground100DimGrayBrush}" />
+                    </Paragraph>
+                </RichTextBlock>
+
+            </Grid>
         </Grid>
     </Grid>
 
