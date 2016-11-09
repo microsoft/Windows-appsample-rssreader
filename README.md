@@ -6,6 +6,7 @@
 
 A mini-app for retrieving RSS feeds and viewing articles, showing MVVM and design best practices.
 Users can specify the URL of a feed, view articles in a WebView control, and save favorite articles to local storage. 
+This sample runs on the Universal Windows Platform (UWP). 
 
 ![RssReader app displaying some sample feeds](RssReader.png)
 
