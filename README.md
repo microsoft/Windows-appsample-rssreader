@@ -4,9 +4,8 @@
 
 # RssReader sample
 
-**RssReader** is a sample Universal Windows Platform (UWP) app for retrieving RSS feeds and viewing articles. 
-Users can specify the URL of a feed, launch articles for viewing in the browser, and save favorite articles to 
-local storage. It is designed to run on multiple form factors and uses an MVVM architecture.  
+A mini-app for retrieving RSS feeds and viewing articles, showing MVVM and design best practices.
+Users can specify the URL of a feed, view articles in a WebView control, and save favorite articles to local storage. 
 
 ![RssReader app displaying some sample feeds](RssReader.png)
 
