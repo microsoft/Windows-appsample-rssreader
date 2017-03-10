@@ -69,8 +69,8 @@ namespace RssReader.Views
         /// way to prevent this is to use a one-way binding, and update CurrentArticle
         /// in this ItemClick event handler. 
         /// </remarks>
-        private void ArticlesListView_ItemClick(object sender, ItemClickEventArgs e) => 
-            ViewModel.CurrentArticle = e.ClickedItem as ArticleViewModel;
+        private void ArticlesListView_ItemInvoked(object sender, ListViewItem listViewItem) =>
+            ViewModel.CurrentArticle = ArticlesListView.ItemFromContainer(listViewItem) as ArticleViewModel;
 
         /// <summary>
         /// Updates the favorites list when the user stars or unstars an article. 
