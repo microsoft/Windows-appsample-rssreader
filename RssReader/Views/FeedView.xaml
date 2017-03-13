@@ -297,7 +297,7 @@
                                       AllowDrop="True"
                                       IsSwipeEnabled="True"
                                       IsItemClickEnabled="True"
-                                      ItemClick="ArticlesListView_ItemClick"
+                                      ItemInvoked="ArticlesListView_ItemInvoked"
                                       ItemContainerStyle="{StaticResource FeedView}"
                                       ItemTemplate="{StaticResource ArticleItemViewTemplate}"
                                       Visibility="{x:Bind ViewModel.CurrentFeed.IsEmpty, Mode=OneWay, ConverterParameter=Reverse, Converter={StaticResource BooleanToVisibilityConverter}}" />
