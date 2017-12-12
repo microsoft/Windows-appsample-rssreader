@@ -155,7 +155,7 @@ publish/
 csx/
 *.build.csdef
 
-# Windows Store app package directory
+# Microsoft Store app package directory
 AppPackages/
 
 # Visual Studio cache files
