@@ -12,3 +12,4 @@ This sample runs on the Universal Windows Platform (UWP).
   - xaml
   technologies:
   - windows
+  vssolution: RssReader.sln
