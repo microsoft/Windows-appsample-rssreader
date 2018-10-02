@@ -1,0 +1,2 @@
+MainPackage=C:\Users\misatran\sample-scripts\Windows-appsample-rssreader\RssReader\bin\ARM\Debug\x64\RssReader\RssReader_1.0.0.0_x64_Debug.appx
+SymbolPackage=C:\Users\misatran\sample-scripts\Windows-appsample-rssreader\RssReader\AppPackages\RssReader_1.0.0.0_Debug_Test\RssReader_1.0.0.0_x64_Debug.appxsym

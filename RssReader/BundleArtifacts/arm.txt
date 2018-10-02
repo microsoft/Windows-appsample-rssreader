@@ -1,0 +1,6 @@
+MainPackage=C:\Users\misatran\sample-scripts\Windows-appsample-rssreader\RssReader\bin\ARM\Debug\RssReader_1.0.0.0_ARM_Debug.appx
+SymbolPackage=C:\Users\misatran\sample-scripts\Windows-appsample-rssreader\RssReader\AppPackages\RssReader_1.0.0.0_Debug_Test\RssReader_1.0.0.0_ARM_Debug.appxsym
+ResourcePack=C:\Users\misatran\sample-scripts\Windows-appsample-rssreader\RssReader\bin\ARM\Debug\RssReader_1.0.0.0_scale-100.appx
+ResourcePack=C:\Users\misatran\sample-scripts\Windows-appsample-rssreader\RssReader\bin\ARM\Debug\RssReader_1.0.0.0_scale-125.appx
+ResourcePack=C:\Users\misatran\sample-scripts\Windows-appsample-rssreader\RssReader\bin\ARM\Debug\RssReader_1.0.0.0_scale-150.appx
+ResourcePack=C:\Users\misatran\sample-scripts\Windows-appsample-rssreader\RssReader\bin\ARM\Debug\RssReader_1.0.0.0_scale-400.appx
