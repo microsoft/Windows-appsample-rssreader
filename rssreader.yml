@@ -9,7 +9,6 @@ This sample runs on the Universal Windows Platform (UWP).
   author: karler
   languages:
   - csharp
-  - xaml
   technologies:
   - windows
   vssolution: RssReader.sln
