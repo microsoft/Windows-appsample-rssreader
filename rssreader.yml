@@ -6,7 +6,7 @@ Users can specify the URL of a feed, view articles in a WebView control, and sav
 This sample runs on the Universal Windows Platform (UWP).
   image: RssReader.png
   generateZip: true
-  author: karler
+  author: KarlErickson
   languages:
   - csharp
   technologies:
