@@ -2,6 +2,17 @@
   category: Navigation Data ControlsLayoutAndText NetworkingAndWebServices FilesFoldersAndLibraries
 -->
 
+---
+topic: sample
+languages:
+- csharp
+products:
+- windows
+- uwp
+statusNotificationTargets:
+- codefirst
+---
+
 # RssReader sample
 
 A mini-app for retrieving RSS feeds and viewing articles, showing MVVM and design best practices.
