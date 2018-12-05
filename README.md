@@ -1,7 +1,3 @@
-<!---
-  category: Navigation Data ControlsLayoutAndText NetworkingAndWebServices FilesFoldersAndLibraries
--->
-
 ---
 topic: sample
 languages:
