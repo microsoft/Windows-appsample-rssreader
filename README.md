@@ -9,6 +9,10 @@ statusNotificationTargets:
 - codefirst
 ---
 
+<!---
+  category: Navigation Data ControlsLayoutAndText NetworkingAndWebServices FilesFoldersAndLibraries
+-->
+
 # RssReader sample
 
 A mini-app for retrieving RSS feeds and viewing articles, showing MVVM and design best practices.
