@@ -15,6 +15,8 @@ statusNotificationTargets:
 
 # RssReader sample
 
+> Note - This sample is targeted and tested for Windows 10, version 1903 (10.0; Build 18362), and Visual Studio 2019. If you prefer, you can use project properties to retarget the project(s) to Windows 10, version 1809 (10.0; Build 17763), and/or open the sample with Visual Studio 2017.
+
 A mini-app for retrieving RSS feeds and viewing articles, showing MVVM and design best practices.
 Users can specify the URL of a feed, view articles in a WebView control, and save favorite articles to local storage. 
 This sample runs on the Universal Windows Platform (UWP). 
