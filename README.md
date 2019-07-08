@@ -113,5 +113,6 @@ The default project is RssReader and you can Start Debugging (F5) or Start Witho
 The app will run in the emulator or on physical devices. 
 
 **Note:** This sample assumes you have an internet connection. Also, the platform target currently defaults to ARM, 
-so be sure to change that to x64 or x86 if you want to test on a non-ARM device. 
+so be sure to change that to x64 or x86 if you want to test on a non-ARM device.
+
 
