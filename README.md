@@ -7,6 +7,7 @@ products:
 - windows-uwp
 statusNotificationTargets:
 - codefirst@microsoft.com
+description: "A mini-app for retrieving RSS feeds and viewing articles, showing MVVM and design best practices."
 ---
 
 <!---
