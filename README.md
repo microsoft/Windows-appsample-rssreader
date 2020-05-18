@@ -19,7 +19,7 @@ A mini-app for retrieving RSS feeds and viewing articles, showing MVVM and desig
 Users can specify the URL of a feed, view articles in a WebView control, and save favorite articles to local storage. 
 This sample runs on the Universal Windows Platform (UWP). 
 
-> Note - This sample is targeted and tested for Windows 10, version 2004 (10.0; Build 19569), and Visual Studio 2019. If you prefer, you can use project properties to retarget the project(s) to Windows 10, version 1903 (10.0; Build 18362).
+> Note - This sample is targeted and tested for Windows 10, version 2004 (10.0; Build 19041), and Visual Studio 2019. If you prefer, you can use project properties to retarget the project(s) to Windows 10, version 1903 (10.0; Build 18362).
 
 ![RssReader app displaying some sample feeds](RssReader.png)
 
