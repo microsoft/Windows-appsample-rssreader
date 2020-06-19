@@ -70,7 +70,7 @@
 
         <Frame x:Name="MasterFrame" />
 
-        <ProgressBar x:Name="LoadingProgressBar"
+        <MUXC:ProgressBar x:Name="LoadingProgressBar"
                      Visibility="Collapsed"
                      Grid.Column="1"
                      Margin="24,8"
