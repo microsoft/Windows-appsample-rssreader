@@ -28,6 +28,7 @@
       xmlns:local="using:RssReader.Views"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:MUXC="using:Microsoft.UI.Xaml.Controls"
       mc:Ignorable="d"
       NavigationCacheMode="Required"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -69,7 +70,7 @@
 
         <Frame x:Name="MasterFrame" />
 
-        <ProgressBar x:Name="LoadingProgressBar"
+        <MUXC:ProgressBar x:Name="LoadingProgressBar"
                      Visibility="Collapsed"
                      Grid.Column="1"
                      Margin="24,8"

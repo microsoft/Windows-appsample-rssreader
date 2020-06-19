@@ -31,6 +31,7 @@
       xmlns:controls="using:RssReader.Controls"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:MUXC="using:Microsoft.UI.Xaml.Controls"
       mc:Ignorable="d">
 
     <Page.Resources>
@@ -88,7 +89,7 @@
                      Style="{StaticResource TextBoxStyle1}" />
 
             <!--Waiting for response message-->
-            <ProgressBar Grid.Row="1"
+            <MUXC:ProgressBar Grid.Row="1"
                          Margin="24, 0"
                          IsIndeterminate="True"
                          Visibility="{x:Bind ViewModel.CurrentFeed.IsLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"

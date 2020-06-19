@@ -32,6 +32,7 @@
       xmlns:vm="using:RssReader.ViewModels"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:MUXC="using:Microsoft.UI.Xaml.Controls"
       mc:Ignorable="d">
 
     <Page.Resources>
@@ -229,10 +230,11 @@
                            VerticalAlignment="Bottom"
                            Fill="{ThemeResource Border100PaleRoseBrush}" />
 
-                <ProgressBar Grid.Row="1"
-                             Margin="24,8"
-                             IsIndeterminate="True"
-                             Style="{ThemeResource ProgressBarStyle1}" />
+                <MUXC:ProgressBar Grid.Row="1" 
+                                  Margin="24,8" 
+                                  IsIndeterminate="True" 
+                                  Style="{ThemeResource ProgressBarStyle1}" />
+
             </Grid>
 
         </Grid>
@@ -282,7 +284,7 @@
                        HorizontalAlignment="Stretch"
                        Fill="{ThemeResource Border100PaleRoseBrush}" />
 
-            <ProgressBar Visibility="{x:Bind ViewModel.CurrentFeed.IsLoadingAndNotEmpty, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+            <MUXC:ProgressBar Visibility="{x:Bind ViewModel.CurrentFeed.IsLoadingAndNotEmpty, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                          Margin="24,1,24,0"
                          Grid.Row="2"
                          IsIndeterminate="True"
